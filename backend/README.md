@@ -19,8 +19,21 @@ cp .env.example .env
 - `CLERK_SECRET_KEY`: Clerk secret key
 - `CLERK_PUBLISHABLE_KEY`: Clerk publishable key
 
+4. **Cài đặt Clerk:**
+   - Đăng ký tài khoản tại [https://clerk.com](https://clerk.com)
+   - Tạo một application mới
+   - Lấy `CLERK_SECRET_KEY` và `CLERK_PUBLISHABLE_KEY` từ Dashboard
+   - Thêm vào file `.env`
+   - Tạo users trên Clerk Dashboard và lấy `clerkId` của từng user
+   - Cập nhật `clerkId` trong file `src/data/mock-users.json`
 
-4. **Chạy server:**
+5. **Seed mock users:**
+```bash
+npm run seed:users
+```
+Script sẽ đọc file `data/mock-users.json` và tạo users trong MongoDB.
+
+6. **Chạy server:**
 ```bash
 npm run dev
 ```
