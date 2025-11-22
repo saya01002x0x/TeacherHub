@@ -2,7 +2,9 @@ import React, { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.jsx";
-import { ClerkProvider } from "@clerk/clerk-react";
+// import { ClerkProvider } from "@clerk/clerk-react";
+import { AuthProvider } from "./context/AuthContext";
+
 import {
     Routes,
     Route,
@@ -17,6 +19,7 @@ import { Toaster } from "react-hot-toast";
 import * as Sentry from "@sentry/react";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+// import AuthProvider from "./providers/AuthProvider.jsx";
 
 const queryClient = new QueryClient();
 
@@ -28,7 +31,7 @@ if (!PUBLISHABLE_KEY) {
 }
 
 Sentry.init({
-    dsn: import.meta.env.VITE_SENTRY_DSN,
+    dsn:import.meta.env.VITE_SENTRY_DSN,
     integrations: [
         Sentry.reactRouterV7BrowserTracingIntegration({
             useEffect: React.useEffect,
@@ -43,13 +46,15 @@ Sentry.init({
 
 createRoot(document.getElementById("root")).render(
     <StrictMode>
-        <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
+        {/*<ClerkProvider publishableKey={PUBLISHABLE_KEY}>*/}
             <BrowserRouter>
                 <QueryClientProvider client={queryClient}>
+                    <AuthProvider>
                         <App />
+                    </AuthProvider>
                     <Toaster position="top-right" />
                 </QueryClientProvider>
             </BrowserRouter>
-        </ClerkProvider>
+        {/*</ClerkProvider>*/}
     </StrictMode>
 );
