@@ -5,6 +5,7 @@ import {
     createChannel,
     addMembersToChannel,
     getChannelMembers,
+    createDirectMessage,
     getMessages,
     sendMessage
 } from "../controllers/chat.controller.js";
@@ -18,6 +19,7 @@ router.post("/channels", protectRoute, createChannel);
 router.post("/channels/:channelId/members", protectRoute, addMembersToChannel);
 router.get("/channels/:channelId/members", protectRoute, getChannelMembers);
 router.get("/channels", protectRoute, getChannels);
+router.post("/direct-messages", protectRoute, createDirectMessage);
 router.get("/messages/:channelId", protectRoute, getMessages);
 router.post("/messages", protectRoute, sendMessage);
 
