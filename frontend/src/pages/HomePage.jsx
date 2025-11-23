@@ -3,6 +3,7 @@ import { Menu, X, Home, Settings, Users, FileText, Bell, ChevronDown, Hash, Vide
 import CustomChannelPreview from '../components/CustomChannelPreview';
 import CustomChannelHeader from '../components/CustomChannelHeader';
 import MembersModal from '../components/MembersModal';
+import CreateChannelModal from '../components/CreateChannelModal';
 
 export default function HomePage() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -11,6 +12,7 @@ export default function HomePage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [showMembersModal, setShowMembersModal] = useState(false);
+    const [showCreateChannelModal, setShowCreateChannelModal] = useState(false);
     const [members, setMembers] = useState([]);
     const [pendingRequests, setPendingRequests] = useState([]);
 
@@ -203,6 +205,30 @@ export default function HomePage() {
         console.log('Rejected request:', requestId);
     };
 
+    const handleCreateChannel = async (channelData) => {
+        // Create new channel object
+        const newChannel = {
+            id: channelData.id,
+            data: {
+                name: channelData.name,
+                private: channelData.private,
+                member_count: channelData.member_count || 1,
+                description: channelData.description,
+            },
+            countUnread: () => 0,
+            state: { members: {} },
+            _client: { user: { id: 'current-user' } }
+        };
+
+        // Add to channels list
+        setChannels([...channels, newChannel]);
+        
+        // Set as active channel
+        setActiveChannel(newChannel);
+        
+        console.log('Channel created:', channelData);
+    };
+
     return (
         <div className="flex h-screen bg-gray-50 overflow-hidden">
             {/* Sidebar - 30% */}
@@ -231,7 +257,7 @@ export default function HomePage() {
                 {/* Create Channel Button */}
                 <div className="px-4 py-3 border-b border-gray-100">
                     <button
-                        onClick={() => console.log('Create channel clicked')}
+                        onClick={() => setShowCreateChannelModal(true)}
                         className="flex items-center gap-2 w-full px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors font-medium text-sm"
                     >
                         <Plus className="w-4 h-4" />
@@ -425,6 +451,14 @@ export default function HomePage() {
                     onRemoveMember={handleRemoveMember}
                     onAcceptRequest={handleAcceptRequest}
                     onRejectRequest={handleRejectRequest}
+                />
+            )}
+
+            {/* Create Channel Modal */}
+            {showCreateChannelModal && (
+                <CreateChannelModal 
+                    onClose={() => setShowCreateChannelModal(false)}
+                    onCreateChannel={handleCreateChannel}
                 />
             )}
         </div>
