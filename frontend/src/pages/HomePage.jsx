@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Menu, X, Home, Settings, Users, FileText, Bell, ChevronDown, Hash, Video, Lock, RefreshCw } from 'lucide-react';
+import { Menu, X, Home, Settings, Users, FileText, Bell, ChevronDown, Hash, Video, Lock, RefreshCw, Plus } from 'lucide-react';
 import CustomChannelPreview from '../components/CustomChannelPreview';
+import CustomChannelHeader from '../components/CustomChannelHeader';
 
 export default function HomePage() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const [dropdownOpen, setDropdownOpen] = useState(false);
     const [activeChannel, setActiveChannel] = useState(null);
     const [channels, setChannels] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -99,6 +99,17 @@ export default function HomePage() {
                     </div>
                     <button className="p-2 rounded hover:bg-gray-100">
                         <Settings size={18} className="text-gray-600" />
+                    </button>
+                </div>
+
+                {/* Create Channel Button */}
+                <div className="px-4 py-3 border-b border-gray-100">
+                    <button
+                        onClick={() => console.log('Create channel clicked')}
+                        className="flex items-center gap-2 w-full px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors font-medium text-sm"
+                    >
+                        <Plus className="w-4 h-4" />
+                        <span>Create Channel</span>
                     </button>
                 </div>
 
@@ -204,58 +215,19 @@ export default function HomePage() {
 
             {/* Main Content - 70% */}
             <div className="flex-1 lg:w-[70%] flex flex-col overflow-hidden">
-                {/* Header */}
-                <header className="h-16 border-b border-gray-200 bg-white flex items-center justify-between px-4 md:px-6">
-                    <div className="flex items-center gap-4 flex-1">
-                        <button
-                            onClick={() => setSidebarOpen(true)}
-                            className="lg:hidden p-2 rounded hover:bg-gray-100"
-                        >
-                            <Menu size={20} className="text-gray-600" />
-                        </button>
-                        <div className="flex items-center gap-2">
-                            {activeChannel?.data?.private ? (
-                                <Lock size={20} className="text-gray-400" />
-                            ) : (
-                                <Hash size={20} className="text-gray-400" />
-                            )}
-                            <h2 className="text-lg font-semibold text-gray-900">
-                                {activeChannel?.data?.name || activeChannel?.id || 'Select a channel'}
-                            </h2>
-                        </div>
-                    </div>
-
-                    <div className="flex items-center gap-3">
-                        <button className="p-2 rounded hover:bg-gray-100 relative">
-                            <Bell size={18} className="text-gray-600" />
-                            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full"></span>
-                        </button>
-                        <button className="p-2 rounded hover:bg-gray-100">
-                            <Video size={18} className="text-gray-600" />
-                        </button>
-                        <div className="relative">
-                            <button
-                                onClick={() => setDropdownOpen(!dropdownOpen)}
-                                className="flex items-center gap-2 px-3 py-1.5 rounded hover:bg-gray-100"
-                            >
-                                <img
-                                    src="https://api.dicebear.com/7.x/avataaars/svg?seed=John"
-                                    alt="Avatar"
-                                    className="w-7 h-7 rounded-full"
-                                />
-                                <ChevronDown size={16} className={`text-gray-500 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
-                            </button>
-                            {dropdownOpen && (
-                                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
-                                    <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Profile</a>
-                                    <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Settings</a>
-                                    <hr className="my-1" />
-                                    <a href="#" className="block px-4 py-2 text-sm text-red-600 hover:bg-gray-50">Logout</a>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </header>
+                {/* Header with mobile menu button */}
+                <div className="lg:hidden h-14 border-b border-gray-200 bg-white flex items-center px-4">
+                    <button
+                        onClick={() => setSidebarOpen(true)}
+                        className="p-2 rounded hover:bg-gray-100 mr-3"
+                    >
+                        <Menu size={20} className="text-gray-600" />
+                    </button>
+                    <span className="font-medium text-gray-700">TeacherHub</span>
+                </div>
+                
+                {/* Custom Channel Header */}
+                <CustomChannelHeader channel={activeChannel} />
 
                 {/* Main Content Area */}
                 <main className="flex-1 overflow-y-auto bg-gray-50">
