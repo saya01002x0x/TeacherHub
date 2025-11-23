@@ -318,6 +318,115 @@ export const getMessages = async (req, res) => {
   }
 };
 
+// Tạo cuộc trò chuyện riêng tư (Direct Message)
+export const createDirectMessage = async (req, res) => {
+  try {
+    const { member, description } = req.body;
+    const userId = req.auth().userId;
+
+    // Validate input
+    if (!member || typeof member !== "string" || member.trim() === "") {
+      return res.status(400).json({
+        message: "member is required and must be a non-empty string",
+      });
+    }
+
+    // Không được tạo DM với chính mình
+    if (member === userId) {
+      return res.status(400).json({
+        message: "Cannot create direct message with yourself",
+      });
+    }
+
+    // Tạo channel ID từ 2 user IDs (giống code mẫu)
+    // Sort để đảm bảo channel ID giống nhau dù user nào tạo
+    const channelId = [userId, member].sort().join("-").slice(0, 64);
+
+    // Đảm bảo cả 2 users đều được upsert trên Stream
+    await upsertStreamUser({ id: userId, name: `User ${userId}` });
+    await upsertStreamUser({ id: member, name: `User ${member}` });
+
+    // Tạo channel với members
+    // Stream SDK sẽ tự động tạo channel nếu chưa tồn tại khi watch()
+    const channel = streamClient.channel("messaging", channelId, {
+      members: [userId, member],
+      description: description?.trim() || "",
+    });
+
+    // Watch channel (sẽ tạo mới nếu chưa tồn tại, hoặc lấy channel đã tồn tại)
+    await channel.watch();
+
+    // Query để lấy thông tin đầy đủ của channel
+    const channelState = await channel.query();
+
+    // Kiểm tra xem channel vừa được tạo hay đã tồn tại từ trước
+    // Nếu created_at gần đây (trong vòng 5 giây) thì có thể là vừa tạo
+    const now = new Date().getTime();
+    const createdTime = new Date(channelState.channel.created_at).getTime();
+    const timeDiff = (now - createdTime) / 1000; // seconds
+    const isNewChannel = timeDiff < 5; // Nếu tạo trong vòng 5 giây thì coi là mới
+
+    // Format members
+    const membersList = Object.keys(channelState.members || {}).map(memberId => ({
+      user_id: memberId,
+      user: channelState.members[memberId]?.user || {},
+      role: channelState.members[memberId]?.role || "member",
+    }));
+
+    // Return response
+    if (isNewChannel) {
+      res.status(201).json({
+        message: "Direct message channel created successfully",
+        channel: {
+          id: channelState.channel.id,
+          type: channelState.channel.type,
+          members: membersList,
+          member_count: membersList.length,
+          description: channelState.channel.data?.description || "",
+          created_at: channelState.channel.created_at,
+          updated_at: channelState.channel.updated_at,
+        },
+      });
+    } else {
+      res.status(200).json({
+        message: "Direct message channel already exists",
+        channel: {
+          id: channelState.channel.id,
+          type: channelState.channel.type,
+          members: membersList,
+          member_count: membersList.length,
+          description: channelState.channel.data?.description || "",
+          created_at: channelState.channel.created_at,
+          updated_at: channelState.channel.updated_at,
+        },
+      });
+    }
+  } catch (error) {
+    console.log("Error creating direct message:", error);
+
+    // Xử lý các error cases cụ thể
+    if (error.message?.includes("user") || error.message?.includes("not found")) {
+      return res.status(404).json({
+        message: "Member user not found",
+        error: error.message,
+      });
+    }
+
+    if (error.message?.includes("permission") || error.message?.includes("forbidden")) {
+      return res.status(403).json({
+        message: "Permission denied",
+        error: error.message,
+      });
+    }
+
+    // Generic error
+    res.status(500).json({
+      message: "Failed to create direct message",
+      error: error.message,
+    });
+  }
+};
+
 // Gửi tin nhắn
 export const sendMessage = async (req, res) => {
   try {
