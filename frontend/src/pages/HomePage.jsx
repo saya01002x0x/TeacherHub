@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Menu, X, Home, Settings, Users, FileText, Bell, ChevronDown, Hash, Video, Lock, RefreshCw, Plus } from 'lucide-react';
 import CustomChannelPreview from '../components/CustomChannelPreview';
 import CustomChannelHeader from '../components/CustomChannelHeader';
+import MembersModal from '../components/MembersModal';
 
 export default function HomePage() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -9,6 +10,9 @@ export default function HomePage() {
     const [channels, setChannels] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [showMembersModal, setShowMembersModal] = useState(false);
+    const [members, setMembers] = useState([]);
+    const [pendingRequests, setPendingRequests] = useState([]);
 
     const menuItems = [
         { icon: Home, label: 'Dashboard', active: true },
@@ -75,6 +79,128 @@ export default function HomePage() {
         setTimeout(() => {
             setLoading(false);
         }, 500);
+    };
+
+    const handleMemberCountClick = () => {
+        setShowMembersModal(true);
+    };
+
+    // Load members when channel changes
+    useEffect(() => {
+        if (activeChannel) {
+            const memberCount = activeChannel.data?.member_count || 0;
+            const channelMembers = [];
+            
+            for (let i = 0; i < memberCount; i++) {
+                channelMembers.push({
+                    user: {
+                        id: `user-${i + 1}`,
+                        name: `User ${i + 1}`,
+                        email: `user${i + 1}@example.com`,
+                        image: i % 2 === 0 ? `https://api.dicebear.com/7.x/avataaars/svg?seed=User${i + 1}` : undefined
+                    }
+                });
+            }
+            
+            setMembers(channelMembers);
+            
+            // Mock pending requests (2-3 requests)
+            const mockRequests = [
+                {
+                    id: 'req-1',
+                    user: {
+                        id: 'pending-1',
+                        name: 'Nguyễn Văn A',
+                        email: 'nguyenvana@example.com',
+                        image: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Pending1'
+                    },
+                    message: 'Xin chào, tôi muốn tham gia channel này'
+                },
+                {
+                    id: 'req-2',
+                    user: {
+                        id: 'pending-2',
+                        name: 'Trần Thị B',
+                        email: 'tranthib@example.com',
+                        image: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Pending2'
+                    },
+                    message: 'Có thể cho tôi tham gia không?'
+                }
+            ];
+            setPendingRequests(mockRequests);
+        }
+    }, [activeChannel]);
+
+    // Handlers for MembersModal
+    const handleAddMember = (email) => {
+        const newMember = {
+            user: {
+                id: `user-${Date.now()}`,
+                name: email.split('@')[0],
+                email: email,
+                image: `https://api.dicebear.com/7.x/avataaars/svg?seed=${email}`
+            }
+        };
+        setMembers([...members, newMember]);
+        
+        // Update channel member count
+        if (activeChannel) {
+            setActiveChannel({
+                ...activeChannel,
+                data: {
+                    ...activeChannel.data,
+                    member_count: (activeChannel.data?.member_count || 0) + 1
+                }
+            });
+        }
+        
+        console.log('Added member:', email);
+    };
+
+    const handleRemoveMember = (memberId) => {
+        setMembers(members.filter(m => (m.user?.id || m.id) !== memberId));
+        
+        // Update channel member count
+        if (activeChannel) {
+            setActiveChannel({
+                ...activeChannel,
+                data: {
+                    ...activeChannel.data,
+                    member_count: Math.max(0, (activeChannel.data?.member_count || 0) - 1)
+                }
+            });
+        }
+        
+        console.log('Removed member:', memberId);
+    };
+
+    const handleAcceptRequest = (requestId) => {
+        const request = pendingRequests.find(r => (r.id || r.user?.id) === requestId);
+        if (request) {
+            // Add to members
+            setMembers([...members, { user: request.user }]);
+            
+            // Remove from pending requests
+            setPendingRequests(pendingRequests.filter(r => (r.id || r.user?.id) !== requestId));
+            
+            // Update channel member count
+            if (activeChannel) {
+                setActiveChannel({
+                    ...activeChannel,
+                    data: {
+                        ...activeChannel.data,
+                        member_count: (activeChannel.data?.member_count || 0) + 1
+                    }
+                });
+            }
+            
+            console.log('Accepted request:', requestId);
+        }
+    };
+
+    const handleRejectRequest = (requestId) => {
+        setPendingRequests(pendingRequests.filter(r => (r.id || r.user?.id) !== requestId));
+        console.log('Rejected request:', requestId);
     };
 
     return (
@@ -227,7 +353,10 @@ export default function HomePage() {
                 </div>
                 
                 {/* Custom Channel Header */}
-                <CustomChannelHeader channel={activeChannel} />
+                <CustomChannelHeader 
+                    channel={activeChannel} 
+                    onMemberCountClick={handleMemberCountClick}
+                />
 
                 {/* Main Content Area */}
                 <main className="flex-1 overflow-y-auto bg-gray-50">
@@ -285,6 +414,19 @@ export default function HomePage() {
                     </div>
                 </div>
             </div>
+
+            {/* Members Modal */}
+            {showMembersModal && (
+                <MembersModal 
+                    members={members}
+                    pendingRequests={pendingRequests}
+                    onClose={() => setShowMembersModal(false)}
+                    onAddMember={handleAddMember}
+                    onRemoveMember={handleRemoveMember}
+                    onAcceptRequest={handleAcceptRequest}
+                    onRejectRequest={handleRejectRequest}
+                />
+            )}
         </div>
     );
 }
