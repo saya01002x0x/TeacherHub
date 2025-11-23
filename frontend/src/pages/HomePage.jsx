@@ -1,9 +1,14 @@
-import { useState } from 'react';
-import { Menu, X, Home, Settings, Users, FileText, Bell, ChevronDown, Hash, Video } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Menu, X, Home, Settings, Users, FileText, Bell, ChevronDown, Hash, Video, Lock, RefreshCw } from 'lucide-react';
+import CustomChannelPreview from '../components/CustomChannelPreview';
 
 export default function HomePage() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [dropdownOpen, setDropdownOpen] = useState(false);
+    const [activeChannel, setActiveChannel] = useState(null);
+    const [channels, setChannels] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     const menuItems = [
         { icon: Home, label: 'Dashboard', active: true },
@@ -11,6 +16,66 @@ export default function HomePage() {
         { icon: FileText, label: 'Documents' },
         { icon: Settings, label: 'Settings' },
     ];
+
+    // Mock data loading
+    useEffect(() => {
+        const loadChannels = async () => {
+            setLoading(true);
+            setError(null);
+            try {
+                // Simulate API call
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                const mockChannels = [
+                    {
+                        id: 'general',
+                        data: { name: 'general', private: false, member_count: 15 },
+                        countUnread: () => 3,
+                        state: { members: {} },
+                        _client: { user: { id: 'current-user' } }
+                    },
+                    {
+                        id: 'random',
+                        data: { name: 'random', private: false, member_count: 8 },
+                        countUnread: () => 0,
+                        state: { members: {} },
+                        _client: { user: { id: 'current-user' } }
+                    },
+                    {
+                        id: 'private-team',
+                        data: { name: 'private-team', private: true, member_count: 5 },
+                        countUnread: () => 1,
+                        state: { members: {} },
+                        _client: { user: { id: 'current-user' } }
+                    }
+                ];
+                
+                setChannels(mockChannels);
+                setActiveChannel(mockChannels[0]); // Set general as default
+            } catch (err) {
+                console.error('Failed to load channels:', err);
+                setError('Failed to load channels');
+            } finally {
+                setLoading(false);
+            }
+        };
+        
+        loadChannels();
+    }, []);
+
+    const handleChannelSelect = (channel) => {
+        setActiveChannel(channel);
+    };
+
+    const handleRetry = () => {
+        setChannels([]);
+        setLoading(true);
+        setError(null);
+        // Trigger re-load
+        setTimeout(() => {
+            setLoading(false);
+        }, 500);
+    };
 
     return (
         <div className="flex h-screen bg-gray-50 overflow-hidden">
@@ -38,8 +103,60 @@ export default function HomePage() {
                 </div>
 
                 {/* Sidebar Content */}
-                <div className="flex-1 overflow-y-auto p-4">
-                    <nav className="space-y-1">
+                <div className="flex-1 overflow-y-auto">
+                    {/* Channel List Section */}
+                    <div className="p-4 border-b border-gray-100">
+                        <h3 className="text-sm font-semibold text-gray-900 mb-3">Channels</h3>
+                        
+                        {/* Loading State */}
+                        {loading && (
+                            <div className="animate-pulse space-y-2">
+                                <div className="h-4 bg-gray-200 rounded w-20"></div>
+                                {[...Array(3)].map((_, i) => (
+                                    <div key={i} className="flex items-center space-x-3">
+                                        <div className="w-4 h-4 bg-gray-200 rounded"></div>
+                                        <div className="h-4 bg-gray-200 rounded flex-1"></div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                        
+                        {/* Error State */}
+                        {error && !loading && (
+                            <div className="text-center py-3">
+                                <p className="text-red-600 text-sm mb-2">{error}</p>
+                                <button
+                                    onClick={handleRetry}
+                                    className="flex items-center justify-center gap-1 px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 mx-auto"
+                                >
+                                    <RefreshCw className="w-3 h-3" />
+                                    Retry
+                                </button>
+                            </div>
+                        )}
+                        
+                        {/* Channels List */}
+                        {!loading && !error && (
+                            <>
+                                <div className="mb-4">
+                                    <div className="space-y-1">
+                                        {channels.map(channel => (
+                                            <CustomChannelPreview
+                                                key={channel.id}
+                                                channel={channel}
+                                                activeChannel={activeChannel}
+                                                setActiveChannel={handleChannelSelect}
+                                            />
+                                        ))}
+                                    </div>
+                                </div>
+                            </>
+                        )}
+                    </div>
+                    
+                    {/* Navigation Menu */}
+                    <div className="p-4">
+                        <nav className="space-y-1">
                         {menuItems.map((item, idx) => (
                             <a
                                 key={idx}
@@ -54,7 +171,8 @@ export default function HomePage() {
                                 <span className="font-medium">{item.label}</span>
                             </a>
                         ))}
-                    </nav>
+                        </nav>
+                    </div>
                 </div>
 
                 {/* Sidebar Footer - User Info */}
@@ -96,8 +214,14 @@ export default function HomePage() {
                             <Menu size={20} className="text-gray-600" />
                         </button>
                         <div className="flex items-center gap-2">
-                            <Hash size={20} className="text-gray-400" />
-                            <h2 className="text-lg font-semibold text-gray-900">general</h2>
+                            {activeChannel?.data?.private ? (
+                                <Lock size={20} className="text-gray-400" />
+                            ) : (
+                                <Hash size={20} className="text-gray-400" />
+                            )}
+                            <h2 className="text-lg font-semibold text-gray-900">
+                                {activeChannel?.data?.name || activeChannel?.id || 'Select a channel'}
+                            </h2>
                         </div>
                     </div>
 
@@ -152,7 +276,7 @@ export default function HomePage() {
                                 { user: 'Charlie Brown', message: 'This platform looks amazing! 🎉', time: '10:35 AM', avatar: 'C' },
                             ].map((msg, idx) => (
                                 <div key={idx} className="flex gap-3 p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                                    <div className="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center text-white font-semibold flex-shrink-0">
+                                    <div className="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center text-white font-semibold shrink-0">
                                         {msg.avatar}
                                     </div>
                                     <div className="flex-1 min-w-0">
