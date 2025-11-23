@@ -13,19 +13,15 @@ const App = () => {
 
     return (
         <>
-            {/*<div style={{ padding: 20 }}>*/}
-            {/*    <h1>Testing Mock User</h1>*/}
-            {/*    <pre>{JSON.stringify(currentUser, null, 2)}</pre>*/}
-            {/*</div>*/}
-                <SentryRoutes>
-                    <Route path="/" element={<HomePage />} />
-                    <Route path="/auth" element={<Navigate to={"/"} replace />} />
-                </SentryRoutes>
+            <SentryRoutes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/auth" element={<Navigate to={"/"} replace />} />
+            </SentryRoutes>
 
-                {/*<SentryRoutes>*/}
-                {/*    <Route path="/auth" element={<AuthPage />} />*/}
-                {/*    <Route path="*" element={<Navigate to={"/auth"} replace />} />*/}
-                {/*</SentryRoutes>*/}
+            {/*<SentryRoutes>*/}
+            {/*    <Route path="/auth" element={<AuthPage />} />*/}
+            {/*    <Route path="*" element={<Navigate to={"/auth"} replace />} />*/}
+            {/*</SentryRoutes>*/}
         </>
     );
 };

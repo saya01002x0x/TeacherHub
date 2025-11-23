@@ -4,6 +4,7 @@ import { connectDB } from "./config/db.js";
 import { clerkMiddleware } from "@clerk/express";
 // import { ingestServe } from "./config/ingest.js";
 import chatRoutes from "./routes/chat.route.js";
+import userRoutes from "./routes/user.route.js";
 import cors from "cors";
 
 const app = express();
@@ -20,6 +21,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/chat", chatRoutes);
+app.use("/api/users", userRoutes);
 
 const startServer = async () => {
   try {

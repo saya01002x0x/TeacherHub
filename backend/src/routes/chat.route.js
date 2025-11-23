@@ -4,8 +4,11 @@ import {
     getChannels,
     createChannel,
     addMembersToChannel,
-    getChannelMembers
+    getChannelMembers,
+    getMessages,
+    sendMessage
 } from "../controllers/chat.controller.js";
+
 import { protectRoute } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
@@ -15,5 +18,7 @@ router.post("/channels", protectRoute, createChannel);
 router.post("/channels/:channelId/members", protectRoute, addMembersToChannel);
 router.get("/channels/:channelId/members", protectRoute, getChannelMembers);
 router.get("/channels", protectRoute, getChannels);
+router.get("/messages/:channelId", protectRoute, getMessages);
+router.post("/messages", protectRoute, sendMessage);
 
 export default router;
