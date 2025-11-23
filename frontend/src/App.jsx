@@ -1,32 +1,31 @@
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react";
 import { Routes, Route, Navigate } from "react-router";
+import HomePage from "./pages/HomePage";
+import AuthPage from "./pages/AuthPage";
 import * as Sentry from "@sentry/react";
-import { useAuth } from "./context/AuthContext";
+import "./index.css";
+// import { useAuth } from "./context/AuthContext";
 
 const SentryRoutes = Sentry.withSentryReactRouterV7Routing(Routes);
 
 const App = () => {
-    const { currentUser } = useAuth();
+    // const { currentUser } = useAuth();
 
     return (
         <>
-            <div style={{ padding: 20 }}>
-                <h1>Testing Mock User</h1>
-                <pre>{JSON.stringify(currentUser, null, 2)}</pre>
-            </div>
-            {/*<SignedIn>*/}
-            {/*    <SentryRoutes>*/}
-            {/*        <Route path="/" element={<HomePage />} />*/}
-            {/*        <Route path="/auth" element={<Navigate to={"/"} replace />} />*/}
-            {/*    </SentryRoutes>*/}
-            {/*</SignedIn>*/}
+            {/*<div style={{ padding: 20 }}>*/}
+            {/*    <h1>Testing Mock User</h1>*/}
+            {/*    <pre>{JSON.stringify(currentUser, null, 2)}</pre>*/}
+            {/*</div>*/}
+                <SentryRoutes>
+                    <Route path="/" element={<HomePage />} />
+                    <Route path="/auth" element={<Navigate to={"/"} replace />} />
+                </SentryRoutes>
 
-            {/*<SignedOut>*/}
-            {/*    <SentryRoutes>*/}
-            {/*        <Route path="/auth" element={<AuthPage />} />*/}
-            {/*        <Route path="*" element={<Navigate to={"/auth"} replace />} />*/}
-            {/*    </SentryRoutes>*/}
-            {/*</SignedOut>*/}
+                {/*<SentryRoutes>*/}
+                {/*    <Route path="/auth" element={<AuthPage />} />*/}
+                {/*    <Route path="*" element={<Navigate to={"/auth"} replace />} />*/}
+                {/*</SentryRoutes>*/}
         </>
     );
 };
