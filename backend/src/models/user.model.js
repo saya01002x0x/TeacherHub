@@ -24,9 +24,4 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Create indexes
-userSchema.index({ email: 1 });
-userSchema.index({ clerkId: 1 });
-
 export const User = mongoose.model("User", userSchema);
-

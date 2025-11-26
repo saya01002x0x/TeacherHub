@@ -5,7 +5,7 @@ const streamClient = StreamChat.getInstance(ENV.STREAM_API_KEY, ENV.STREAM_API_S
 
 export const upsertStreamUser = async (userData) => {
   try {
-    await streamClient.upsertUsers([userData]); // Use upsertUsers with array
+    await streamClient.upsertUser(userData);
     console.log("Stream user upserted successfully:", userData.name);
     return userData;
   } catch (error) {
@@ -39,6 +39,3 @@ export const addUserToPublicChannels = async (newUserId) => {
     await channel.addMembers([newUserId]);
   }
 };
-
-export { streamClient };
-
