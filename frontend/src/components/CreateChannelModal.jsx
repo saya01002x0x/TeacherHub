@@ -1,227 +1,304 @@
-import { useState } from "react";
-import { X, Hash, Lock, AlertCircle } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router";
+import { useChatContext } from "stream-chat-react";
+import * as Sentry from "@sentry/react";
 import toast from "react-hot-toast";
+import { AlertCircleIcon, HashIcon, LockIcon, UsersIcon, XIcon } from "lucide-react";
 
-// Optional Stream Chat import
-let useChatContext = null;
-try {
-  const streamChat = require("stream-chat-react");
-  useChatContext = streamChat.useChatContext;
-} catch (e) {
-  // Stream Chat not available, will use mock mode
-}
-
-const CreateChannelModal = ({ onClose, onCreateChannel }) => {
+const CreateChannelModal = ({ onClose }) => {
   const [channelName, setChannelName] = useState("");
-  const [description, setDescription] = useState("");
   const [channelType, setChannelType] = useState("public");
-  const [error, setError] = useState("");
+  const [description, setDescription] = useState("");
   const [isCreating, setIsCreating] = useState(false);
+  const [error, setError] = useState("");
+  const [users, setUsers] = useState([]);
+  const [selectedMembers, setSelectedMembers] = useState([]);
+  const [loadingUsers, setLoadingUsers] = useState(false);
+  const [_, setSearchParams] = useSearchParams();
 
-  // Try to get Stream Chat context if available (only if hook exists and context is set up)
-  let chatContext = null;
-  if (useChatContext) {
-    try {
-      chatContext = useChatContext();
-    } catch (e) {
-      // Context not available, continue without it
-      console.log("Stream Chat context not available, using mock mode");
-    }
-  }
+  const { client, setActiveChannel } = useChatContext();
 
-  // Validate channel name
-  const validateName = (name) => {
+  // fetch users for member selection
+  useEffect(() => {
+    const fetchUsers = async () => {
+      if (!client?.user) return;
+      setLoadingUsers(true);
+
+      try {
+        const response = await client.queryUsers(
+          { id: { $ne: client.user.id } },
+          { name: 1 },
+          { limit: 100 }
+        );
+
+        const usersOnly = response.users.filter((user) => !user.id.startsWith("recording-"));
+
+        setUsers(usersOnly || []);
+      } catch (error) {
+        console.log("Error fetching users");
+        Sentry.captureException(error, {
+          tags: { component: "CreateChannelModal" },
+          extra: { context: "fetch_users_for_channel" },
+        });
+        setUsers([]);
+      } finally {
+        setLoadingUsers(false);
+      }
+    };
+
+    fetchUsers();
+  }, [client]);
+
+  // reset the form on open: this is not needed, we just deleted it later in the video
+  // useEffect(() => {
+  //   setChannelName("");
+  //   setDescription("");
+  //   setChannelType("public");
+  //   setError("");
+  //   setSelectedMembers([]);
+  // }, []);
+
+  // auto-select all users for public channels
+  useEffect(() => {
+    if (channelType === "public") setSelectedMembers(users.map((u) => u.id));
+    else setSelectedMembers([]);
+  }, [channelType, users]);
+
+  const validateChannelName = (name) => {
     if (!name.trim()) return "Channel name is required";
     if (name.length < 3) return "Channel name must be at least 3 characters";
     if (name.length > 22) return "Channel name must be less than 22 characters";
+
     return "";
   };
 
-  // Tạo slug cho channel ID
-  const slugify = (name) =>
-    name
-      .toLowerCase()
-      .trim()
-      .replace(/\s+/g, "-")
-      .replace(/[^a-z0-9-_]/g, "")
-      .slice(0, 20);
+  const handleChannelNameChange = (e) => {
+    const value = e.target.value;
+    setChannelName(value);
+    setError(validateChannelName(value));
+  };
+
+  const handleMemberToggle = (id) => {
+    if (selectedMembers.includes(id)) {
+      setSelectedMembers(selectedMembers.filter((uid) => uid !== id));
+    } else {
+      setSelectedMembers([...selectedMembers, id]);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const validationError = validateChannelName(channelName);
+    if (validationError) return setError(validationError);
 
-    const validationMsg = validateName(channelName);
-    if (validationMsg) {
-      setError(validationMsg);
-      return;
-    }
+    if (isCreating || !client?.user) return;
 
     setIsCreating(true);
     setError("");
 
     try {
-      const channelId = slugify(channelName);
+      // MY COOL CHANNEL !#1 => my-cool-channel-1
+      const channelId = channelName
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, "-")
+        .replace(/[^a-z0-9-_]/g, "")
+        .slice(0, 20);
+
+      // prepare the channel data
+
       const channelData = {
-        id: channelId,
         name: channelName.trim(),
-        description,
-        private: channelType === "private",
-        member_count: 1, // Creator is the first member
+        created_by_id: client.user.id,
+        members: [client.user.id, ...selectedMembers],
       };
 
-      // If Stream Chat is available, use it
-      if (chatContext?.client?.user) {
-        const streamChannelData = {
-          name: channelName.trim(),
-          created_by_id: chatContext.client.user.id,
-          description,
-          private: channelType === "private",
-          visibility: channelType === "private" ? "private" : "public",
-          discoverable: channelType === "public",
-          members: [chatContext.client.user.id],
-        };
+      if (description) channelData.description = description;
 
-        const channel = chatContext.client.channel("messaging", channelId, streamChannelData);
-        await channel.watch();
-
-        if (chatContext.setActiveChannel) {
-          chatContext.setActiveChannel(channel);
-        }
+      if (channelType === "private") {
+        channelData.private = true;
+        channelData.visibility = "private";
+      } else {
+        channelData.visibility = "public";
+        channelData.discoverable = true;
       }
 
-      // Call custom handler if provided (for mock/alternative implementation)
-      if (onCreateChannel) {
-        await onCreateChannel(channelData);
-      }
+      const channel = client.channel("messaging", channelId, channelData);
 
-      toast.success(`Channel "${channelName}" đã được tạo!`);
+      await channel.watch();
+
+      setActiveChannel(channel);
+      setSearchParams({ channel: channelId });
+
+      toast.success(`Channel "${channelName}" created successfully!`);
       onClose();
-    } catch (err) {
-      console.error("Error creating channel:", err);
-      setError("Không thể tạo channel. Vui lòng thử lại.");
-      toast.error("Không thể tạo channel.");
+    } catch (error) {
+      console.log("Error creating the channel", error);
     } finally {
       setIsCreating(false);
     }
   };
 
   return (
-    <div 
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-      onClick={onClose}
-    >
-      <div 
-        className="bg-white rounded-xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Header */}
-        <div className="flex items-center justify-between border-b px-6 py-4">
-          <h2 className="text-2xl font-semibold text-gray-900">Tạo Channel mới</h2>
-          <button 
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 transition-colors p-1 rounded hover:bg-gray-100"
-          >
-            <X size={20} />
+    <div className="create-channel-modal-overlay">
+      <div className="create-channel-modal">
+        <div className="create-channel-modal__header">
+          <h2>Create a channel</h2>
+          <button onClick={onClose} className="create-channel-modal__close">
+            <XIcon className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6">
-          {/* Error */}
+        {/* form */}
+        <form onSubmit={handleSubmit} className="create-channel-modal__form">
           {error && (
-            <div className="flex items-center gap-2 p-3 mb-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
-              <AlertCircle size={18} />
-              <span className="text-sm">{error}</span>
+            <div className="form-error">
+              <AlertCircleIcon className="w-4 h-4" />
+              <span>{error}</span>
             </div>
           )}
 
           {/* Channel name */}
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Tên Channel
-            </label>
-            <div className="relative">
-              <Hash className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+          <div className="form-group">
+            <div className="input-with-icon">
+              <HashIcon className="w-4 h-4 input-icon" />
               <input
+                id="channelName"
+                type="text"
                 value={channelName}
-                onChange={(e) => {
-                  setChannelName(e.target.value);
-                  setError(validateName(e.target.value));
-                }}
-                placeholder="Nhập tên channel"
-                maxLength={22}
+                onChange={handleChannelNameChange}
+                placeholder="e.g. marketing"
+                className={`form-input ${error ? "form-input--error" : ""}`}
                 autoFocus
-                className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                maxLength={22}
               />
             </div>
 
+            {/* channel id  preview */}
             {channelName && (
-              <div className="mt-2 text-sm text-gray-500">
-                Channel ID: <strong className="text-indigo-600">#{slugify(channelName)}</strong>
+              <div className="form-hint">
+                Channel ID will be: #
+                {channelName
+                  .toLowerCase()
+                  .replace(/\s+/g, "-")
+                  .replace(/[^a-z0-9-_]/g, "")}
               </div>
             )}
           </div>
 
-          {/* Channel type */}
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-3">
-              Loại Channel
-            </label>
-            <div className="flex gap-4">
-              <label className="flex items-center gap-2 p-3 border-2 rounded-lg cursor-pointer transition-all flex-1 hover:bg-gray-50">
+          {/* CHANNEL TYPE */}
+          <div className="form-group">
+            <label>Channel type</label>
+
+            <div className="radio-group">
+              <label className="radio-option">
                 <input
                   type="radio"
                   value="public"
                   checked={channelType === "public"}
                   onChange={(e) => setChannelType(e.target.value)}
-                  className="text-indigo-600 focus:ring-indigo-500"
                 />
-                <Hash size={18} className="text-gray-600" />
-                <span className="font-medium text-gray-700">Public</span>
+                <div className="radio-content">
+                  <HashIcon className="size-4" />
+                  <div>
+                    <div className="radio-title">Public</div>
+                    <div className="radio-description">Anyone can join this channel</div>
+                  </div>
+                </div>
               </label>
 
-              <label className="flex items-center gap-2 p-3 border-2 rounded-lg cursor-pointer transition-all flex-1 hover:bg-gray-50">
+              <label className="radio-option">
                 <input
                   type="radio"
                   value="private"
                   checked={channelType === "private"}
                   onChange={(e) => setChannelType(e.target.value)}
-                  className="text-indigo-600 focus:ring-indigo-500"
                 />
-                <Lock size={18} className="text-gray-600" />
-                <span className="font-medium text-gray-700">Private</span>
+                <div className="radio-content">
+                  <LockIcon className="size-4" />
+                  <div>
+                    <div className="radio-title">Private</div>
+                    <div className="radio-description">Only invited members can join</div>
+                  </div>
+                </div>
               </label>
             </div>
           </div>
 
+          {/* add members component */}
+          {channelType === "private" && (
+            <div className="form-group">
+              <label>Add members</label>
+              <div className="member-selection-header">
+                <button
+                  type="button"
+                  className="btn btn-secondary btn-small"
+                  onClick={() => setSelectedMembers(users.map((u) => u.id))}
+                  disabled={loadingUsers || users.length === 0}
+                >
+                  <UsersIcon className="w-4 h-4" />
+                  Select Everyone
+                </button>
+                <span className="selected-count">{selectedMembers.length} selected</span>
+              </div>
+
+              <div className="members-list">
+                {loadingUsers ? (
+                  <p>Loading users...</p>
+                ) : users.length === 0 ? (
+                  <p>No users found</p>
+                ) : (
+                  users.map((user) => (
+                    <label key={user.id} className="member-item">
+                      <input
+                        type="checkbox"
+                        checked={selectedMembers.includes(user.id)}
+                        onChange={() => handleMemberToggle(user.id)}
+                        className="member-checkbox"
+                      />
+                      {user.image ? (
+                        <img
+                          src={user.image}
+                          alt={user.name || user.id}
+                          className="member-avatar"
+                        />
+                      ) : (
+                        <div className="member-avatar member-avatar-placeholder">
+                          <span>{(user.name || user.id).charAt(0).toUpperCase()}</span>
+                        </div>
+                      )}
+                      <span className="member-name">{user.name || user.id}</span>
+                    </label>
+                  ))
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Description */}
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Mô tả (tùy chọn)
-            </label>
+          <div className="form-group">
+            <label htmlFor="description">Description (optional)</label>
             <textarea
-              rows={3}
+              id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Channel này dùng để làm gì?"
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
+              placeholder="What's this channel about?"
+              className="form-textarea"
+              rows={3}
             />
           </div>
 
           {/* Actions */}
-          <div className="flex gap-3">
-            <button 
-              type="button" 
-              onClick={onClose}
-              className="flex-1 px-4 py-2.5 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium"
-            >
-              Hủy
+          <div className="create-channel-modal__actions">
+            <button type="button" onClick={onClose} className="btn btn-secondary">
+              Cancel
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={!channelName.trim() || isCreating}
+              className="btn btn-primary"
             >
-              {isCreating ? "Đang tạo..." : "Tạo Channel"}
+              {isCreating ? "Creating..." : "Create Channel"}
             </button>
           </div>
         </form>
