@@ -1,7 +1,10 @@
 import "../styles/auth.css";
 import { SignInButton } from "@clerk/clerk-react";
+import { useTranslation } from "react-i18next";
 
 const AuthPage = () => {
+  const { t } = useTranslation();
+
   return (
     <div className="auth-container">
       <div className="auth-left">
@@ -11,33 +14,32 @@ const AuthPage = () => {
             <span className="brand-name">Slap</span>
           </div>
 
-          <h1 className="hero-title">Where Work Happens ✨</h1>
+          <h1 className="hero-title">{t("auth.title")}</h1>
 
           <p className="hero-subtitle">
-            Connect with your team instantly through secure, real-time messaging. Experience
-            seamless collaboration with powerful features designed for modern teams.
+            {t("auth.subtitle")}
           </p>
 
           <div className="features-list">
             <div className="feature-item">
               <span className="feature-icon">💬</span>
-              <span>Real-time messaging</span>
+              <span>{t("auth.features.realtime")}</span>
             </div>
 
             <div className="feature-item">
               <span className="feature-icon">🎥</span>
-              <span>Video calls & meetings</span>
+              <span>{t("auth.features.video")}</span>
             </div>
 
             <div className="feature-item">
               <span className="feature-icon">🔒</span>
-              <span>Secure & private</span>
+              <span>{t("auth.features.secure")}</span>
             </div>
           </div>
 
           <SignInButton mode="modal">
             <button className="cta-button">
-              Get Started with Slap
+              {t("auth.cta")}
               <span className="button-arrow">→</span>
             </button>
           </SignInButton>

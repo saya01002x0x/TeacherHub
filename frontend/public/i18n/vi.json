@@ -1,0 +1,99 @@
+{
+  "homepage": {
+    "title": "Nơi công việc diễn ra",
+    "description": "Kết nối ngay lập tức với các thành viên trong nhóm thông qua giao tiếp thời gian thực an toàn. Trải nghiệm sự hợp tác mượt mà với các tính năng được thiết kế cho làm việc nhóm.",
+    "features": {
+      "realtime": "Tin nhắn thời gian thực",
+      "video": "Gọi video & họp",
+      "secure": "An toàn & Riêng tư"
+    },
+    "cta": "Bắt đầu TeacherHub ->"
+  },
+  "auth": {
+    "title": "Nơi công việc diễn ra ✨",
+    "subtitle": "Kết nối ngay lập tức với các thành viên trong nhóm thông qua giao tiếp thời gian thực an toàn. Trải nghiệm sự hợp tác mượt mà với các tính năng được thiết kế cho làm việc nhóm.",
+    "features": {
+      "realtime": "Tin nhắn thời gian thực",
+      "video": "Gọi video & họp",
+      "secure": "An toàn & Riêng tư"
+    },
+    "cta": "Bắt đầu với Slap"
+  },
+  "call": {
+    "error": {
+      "connect": "Không thể kết nối tới cuộc gọi.",
+      "init": "Không thể khởi tạo cuộc gọi. Vui lòng làm mới hoặc thử lại sau."
+    },
+    "connecting": "Đang kết nối tới cuộc gọi..."
+  },
+  "chat": {
+    "error": {
+      "generic": "Đã xảy ra lỗi...",
+      "loading_channels": "Lỗi khi tải danh sách kênh"
+    },
+    "create_channel": "Tạo kênh",
+    "channels": "Kênh",
+    "loading_channels": "Đang tải danh sách kênh...",
+    "direct_messages": "Tin nhắn trực tiếp"
+  },
+  "modal": {
+    "create_channel": {
+      "title": "Tạo kênh mới",
+      "validation": {
+        "required": "Tên kênh là bắt buộc",
+        "min_length": "Tên kênh phải có ít nhất 3 ký tự",
+        "max_length": "Tên kênh phải ít hơn 22 ký tự"
+      },
+      "success": "Kênh \"{{name}}\" đã được tạo thành công!",
+      "placeholder": "ví dụ: marketing",
+      "id_preview": "ID kênh sẽ là: #",
+      "type": {
+        "label": "Loại kênh",
+        "public": "Công khai",
+        "public_desc": "Bất kỳ ai cũng có thể tham gia kênh này",
+        "private": "Riêng tư",
+        "private_desc": "Chỉ thành viên được mời mới có thể tham gia"
+      },
+      "members": {
+        "label": "Thêm thành viên",
+        "select_all": "Chọn tất cả",
+        "selected_count": "{{count}} đã chọn",
+        "loading": "Đang tải người dùng...",
+        "no_users": "Không tìm thấy người dùng"
+      },
+      "description": {
+        "label": "Mô tả (tùy chọn)",
+        "placeholder": "Kênh này nói về điều gì?"
+      },
+      "submit": "Tạo kênh"
+    },
+    "invite": {
+      "title": "Mời người dùng",
+      "error": {
+        "load_users": "Không thể tải danh sách người dùng",
+        "invite": "Không thể mời người dùng"
+      },
+      "loading": "Đang tải người dùng...",
+      "no_users": "Không tìm thấy người dùng"
+    },
+    "members": {
+      "title": "Thành viên kênh"
+    },
+    "pinned": {
+      "title": "Tin nhắn đã ghim",
+      "empty": "Không có tin nhắn nào được ghim"
+    }
+  },
+  "common": {
+    "cancel": "Hủy",
+    "creating": "Đang tạo...",
+    "inviting": "Đang mời...",
+    "invite": "Mời"
+  },
+  "channel": {
+    "header": {
+      "video_call_tooltip": "Bắt đầu cuộc gọi video",
+      "video_call_msg": "Tôi đã bắt đầu cuộc gọi video. Tham gia tại đây: {{url}}"
+    }
+  }
+}
