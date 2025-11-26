@@ -1,131 +1,71 @@
-import { UserButton } from "@clerk/clerk-react";
-import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router";
-import { useStreamChat } from "../hooks/useStreamChat";
-import PageLoader from "../components/PageLoader";
-
-import {
-  Chat,
-  Channel,
-  ChannelList,
-  MessageList,
-  MessageInput,
-  Thread,
-  Window,
-} from "stream-chat-react";
-
-import "../styles/stream-chat-theme.css";
-import { HashIcon, PlusIcon, UsersIcon } from "lucide-react";
-import CreateChannelModal from "../components/CreateChannelModal";
-import CustomChannelPreview from "../components/CustomChannelPreview";
-import UsersList from "../components/UsersList";
-import CustomChannelHeader from "../components/CustomChannelHeader";
+import { useTranslation } from "react-i18next";
+import { Link } from "react-router";
+import { MessageSquare, Video, ShieldCheck } from "lucide-react";
+import LanguageSwitcher from "../components/LanguageSwitcher";
+import Illustration3D from "../components/Illustration3D";
 
 const HomePage = () => {
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [activeChannel, setActiveChannel] = useState(null);
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  const { chatClient, error, isLoading } = useStreamChat();
-
-  // set active channel from URL params
-  useEffect(() => {
-    if (chatClient) {
-      const channelId = searchParams.get("channel");
-      if (channelId) {
-        const channel = chatClient.channel("messaging", channelId);
-        setActiveChannel(channel);
-      }
-    }
-  }, [chatClient, searchParams]);
-
-  // todo: handle this with a better component
-  if (error) return <p>Something went wrong...</p>;
-  if (isLoading || !chatClient) return <PageLoader />;
+  const { t } = useTranslation();
 
   return (
-    <div className="chat-wrapper">
-      <Chat client={chatClient}>
-        <div className="chat-container">
-          {/* LEFT SIDEBAR */}
-          <div className="str-chat__channel-list">
-            <div className="team-channel-list">
-              {/* HEADER */}
-              <div className="team-channel-list__header gap-4">
-                <div className="brand-container">
-                  <img src="/logo.png" alt="Logo" className="brand-logo" />
-                  <span className="brand-name">TeacherHub</span>
-                </div>
-                <div className="user-button-wrapper">
-                  <UserButton />
-                </div>
-              </div>
-              {/* CHANNELS LIST */}
-              <div className="team-channel-list__content">
-                <div className="create-channel-section">
-                  <button onClick={() => setIsCreateModalOpen(true)} className="create-channel-btn">
-                    <PlusIcon className="size-4" />
-                    <span>Create Channel</span>
-                  </button>
-                </div>
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-8 relative overflow-hidden">
+      {/* Language Switcher */}
+      <LanguageSwitcher />
 
-                {/* CHANNEL LIST */}
-                <ChannelList
-                  filters={{ members: { $in: [chatClient?.user?.id] } }}
-                  options={{ state: true, watch: true }}
-                  Preview={({ channel }) => (
-                    <CustomChannelPreview
-                      channel={channel}
-                      activeChannel={activeChannel}
-                      setActiveChannel={(channel) => setSearchParams({ channel: channel.id })}
-                    />
-                  )}
-                  List={({ children, loading, error }) => (
-                    <div className="channel-sections">
-                      <div className="section-header">
-                        <div className="section-title">
-                          <HashIcon className="size-4" />
-                          <span>Channels</span>
-                        </div>
-                      </div>
+      <div className="max-w-7xl w-full bg-white rounded-[3rem] shadow-2xl overflow-hidden flex flex-col lg:flex-row min-h-[600px]">
+        {/* Left Column */}
+        <div className="w-full lg:w-1/2 p-12 lg:p-16 flex flex-col justify-center">
+          {/* Logo */}
+          <div className="flex items-center gap-3 mb-8">
+            <div className="w-10 h-10 bg-red-400 rounded-full flex items-center justify-center text-white font-bold">
+              TH
+            </div>
+            <span className="text-xl font-bold text-purple-600">TeacherHub</span>
+          </div>
 
-                      {/* todos: add better components here instead of just a simple text  */}
-                      {loading && <div className="loading-message">Loading channels...</div>}
-                      {error && <div className="error-message">Error loading channels</div>}
+          {/* Main Title */}
+          <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+            {t("homepage.title")}
+          </h1>
 
-                      <div className="channels-list">{children}</div>
+          {/* Description */}
+          <p className="text-gray-600 text-lg mb-8 leading-relaxed">
+            {t("homepage.description")}
+          </p>
 
-                      <div className="section-header direct-messages">
-                        <div className="section-title">
-                          <UsersIcon className="size-4" />
-                          <span>Direct Messages</span>
-                        </div>
-                      </div>
-                      <UsersList activeChannel={activeChannel} />
-                    </div>
-                  )}
-                />
-              </div>
+          {/* Features List */}
+          <div className="space-y-4 mb-10">
+            <div className="flex items-center gap-3 bg-gray-100 p-4 rounded-xl">
+              <MessageSquare className="text-purple-500 w-6 h-6" />
+              <span className="font-medium text-gray-700">{t("homepage.features.realtime")}</span>
+            </div>
+            <div className="flex items-center gap-3 bg-gray-100 p-4 rounded-xl">
+              <Video className="text-purple-500 w-6 h-6" />
+              <span className="font-medium text-gray-700">{t("homepage.features.video")}</span>
+            </div>
+            <div className="flex items-center gap-3 bg-gray-100 p-4 rounded-xl">
+              <ShieldCheck className="text-purple-500 w-6 h-6" />
+              <span className="font-medium text-gray-700">{t("homepage.features.secure")}</span>
             </div>
           </div>
 
-          {/* RIGHT CONTAINER */}
-          <div className="chat-main">
-            <Channel channel={activeChannel}>
-              <Window>
-                <CustomChannelHeader />
-                <MessageList />
-                <MessageInput />
-              </Window>
-
-              <Thread />
-            </Channel>
-          </div>
+          {/* CTA Button */}
+          <Link
+            to="/auth"
+            className="inline-flex items-center justify-center w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-4 px-8 rounded-xl transition-all transform hover:scale-105 shadow-lg shadow-purple-200"
+          >
+            {t("homepage.cta")}
+          </Link>
         </div>
 
-        {isCreateModalOpen && <CreateChannelModal onClose={() => setIsCreateModalOpen(false)} />}
-      </Chat>
+        {/* Right Column - Illustration */}
+        <div className="w-full lg:w-1/2 bg-gray-100 relative flex items-center justify-center p-8">
+          <div className="absolute inset-0 border-l border-gray-200" />
+          <Illustration3D />
+        </div>
+      </div>
     </div>
   );
 };
+
 export default HomePage;

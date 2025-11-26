@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from "react-router";
 
 import AuthPage from "./pages/AuthPage";
 import CallPage from "./pages/CallPage";
+import ChatPage from "./pages/ChatPage";
 import HomePage from "./pages/HomePage";
 
 import * as Sentry from "@sentry/react";
@@ -16,8 +17,9 @@ const App = () => {
 
   return (
     <SentryRoutes>
-      <Route path="/" element={isSignedIn ? <HomePage /> : <Navigate to={"/auth"} replace />} />
-      <Route path="/auth" element={!isSignedIn ? <AuthPage /> : <Navigate to={"/"} replace />} />
+      <Route path="/" element={<HomePage />} />
+      <Route path="/chat" element={isSignedIn ? <ChatPage /> : <Navigate to={"/auth"} replace />} />
+      <Route path="/auth" element={!isSignedIn ? <AuthPage /> : <Navigate to={"/chat"} replace />} />
 
       <Route
         path="/call/:id"
@@ -26,7 +28,7 @@ const App = () => {
 
       <Route
         path="*"
-        element={isSignedIn ? <Navigate to={"/"} replace /> : <Navigate to={"/auth"} replace />}
+        element={isSignedIn ? <Navigate to={"/chat"} replace /> : <Navigate to={"/auth"} replace />}
       />
     </SentryRoutes>
   );

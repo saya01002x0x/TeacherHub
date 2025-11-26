@@ -4,8 +4,10 @@ import { useChatContext } from "stream-chat-react";
 import * as Sentry from "@sentry/react";
 import toast from "react-hot-toast";
 import { AlertCircleIcon, HashIcon, LockIcon, UsersIcon, XIcon } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const CreateChannelModal = ({ onClose }) => {
+  const { t } = useTranslation();
   const [channelName, setChannelName] = useState("");
   const [channelType, setChannelType] = useState("public");
   const [description, setDescription] = useState("");
@@ -65,9 +67,9 @@ const CreateChannelModal = ({ onClose }) => {
   }, [channelType, users]);
 
   const validateChannelName = (name) => {
-    if (!name.trim()) return "Channel name is required";
-    if (name.length < 3) return "Channel name must be at least 3 characters";
-    if (name.length > 22) return "Channel name must be less than 22 characters";
+    if (!name.trim()) return t("modal.create_channel.validation.required");
+    if (name.length < 3) return t("modal.create_channel.validation.min_length");
+    if (name.length > 22) return t("modal.create_channel.validation.max_length");
 
     return "";
   };
@@ -130,7 +132,7 @@ const CreateChannelModal = ({ onClose }) => {
       setActiveChannel(channel);
       setSearchParams({ channel: channelId });
 
-      toast.success(`Channel "${channelName}" created successfully!`);
+      toast.success(t("modal.create_channel.success", { name: channelName }));
       onClose();
     } catch (error) {
       console.log("Error creating the channel", error);
@@ -143,7 +145,7 @@ const CreateChannelModal = ({ onClose }) => {
     <div className="create-channel-modal-overlay">
       <div className="create-channel-modal">
         <div className="create-channel-modal__header">
-          <h2>Create a channel</h2>
+          <h2>{t("modal.create_channel.title")}</h2>
           <button onClick={onClose} className="create-channel-modal__close">
             <XIcon className="w-5 h-5" />
           </button>
@@ -167,7 +169,7 @@ const CreateChannelModal = ({ onClose }) => {
                 type="text"
                 value={channelName}
                 onChange={handleChannelNameChange}
-                placeholder="e.g. marketing"
+                placeholder={t("modal.create_channel.placeholder")}
                 className={`form-input ${error ? "form-input--error" : ""}`}
                 autoFocus
                 maxLength={22}
@@ -177,7 +179,7 @@ const CreateChannelModal = ({ onClose }) => {
             {/* channel id  preview */}
             {channelName && (
               <div className="form-hint">
-                Channel ID will be: #
+                {t("modal.create_channel.id_preview")}
                 {channelName
                   .toLowerCase()
                   .replace(/\s+/g, "-")
@@ -188,7 +190,7 @@ const CreateChannelModal = ({ onClose }) => {
 
           {/* CHANNEL TYPE */}
           <div className="form-group">
-            <label>Channel type</label>
+            <label>{t("modal.create_channel.type.label")}</label>
 
             <div className="radio-group">
               <label className="radio-option">
@@ -201,8 +203,8 @@ const CreateChannelModal = ({ onClose }) => {
                 <div className="radio-content">
                   <HashIcon className="size-4" />
                   <div>
-                    <div className="radio-title">Public</div>
-                    <div className="radio-description">Anyone can join this channel</div>
+                    <div className="radio-title">{t("modal.create_channel.type.public")}</div>
+                    <div className="radio-description">{t("modal.create_channel.type.public_desc")}</div>
                   </div>
                 </div>
               </label>
@@ -217,8 +219,8 @@ const CreateChannelModal = ({ onClose }) => {
                 <div className="radio-content">
                   <LockIcon className="size-4" />
                   <div>
-                    <div className="radio-title">Private</div>
-                    <div className="radio-description">Only invited members can join</div>
+                    <div className="radio-title">{t("modal.create_channel.type.private")}</div>
+                    <div className="radio-description">{t("modal.create_channel.type.private_desc")}</div>
                   </div>
                 </div>
               </label>
@@ -228,7 +230,7 @@ const CreateChannelModal = ({ onClose }) => {
           {/* add members component */}
           {channelType === "private" && (
             <div className="form-group">
-              <label>Add members</label>
+              <label>{t("modal.create_channel.members.label")}</label>
               <div className="member-selection-header">
                 <button
                   type="button"
@@ -237,16 +239,16 @@ const CreateChannelModal = ({ onClose }) => {
                   disabled={loadingUsers || users.length === 0}
                 >
                   <UsersIcon className="w-4 h-4" />
-                  Select Everyone
+                  {t("modal.create_channel.members.select_all")}
                 </button>
-                <span className="selected-count">{selectedMembers.length} selected</span>
+                <span className="selected-count">{t("modal.create_channel.members.selected_count", { count: selectedMembers.length })}</span>
               </div>
 
               <div className="members-list">
                 {loadingUsers ? (
-                  <p>Loading users...</p>
+                  <p>{t("modal.create_channel.members.loading")}</p>
                 ) : users.length === 0 ? (
-                  <p>No users found</p>
+                  <p>{t("modal.create_channel.members.no_users")}</p>
                 ) : (
                   users.map((user) => (
                     <label key={user.id} className="member-item">
@@ -277,12 +279,12 @@ const CreateChannelModal = ({ onClose }) => {
 
           {/* Description */}
           <div className="form-group">
-            <label htmlFor="description">Description (optional)</label>
+            <label htmlFor="description">{t("modal.create_channel.description.label")}</label>
             <textarea
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="What's this channel about?"
+              placeholder={t("modal.create_channel.description.placeholder")}
               className="form-textarea"
               rows={3}
             />
@@ -291,14 +293,14 @@ const CreateChannelModal = ({ onClose }) => {
           {/* Actions */}
           <div className="create-channel-modal__actions">
             <button type="button" onClick={onClose} className="btn btn-secondary">
-              Cancel
+              {t("common.cancel")}
             </button>
             <button
               type="submit"
               disabled={!channelName.trim() || isCreating}
               className="btn btn-primary"
             >
-              {isCreating ? "Creating..." : "Create Channel"}
+              {isCreating ? t("common.creating") : t("modal.create_channel.submit")}
             </button>
           </div>
         </form>

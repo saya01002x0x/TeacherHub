@@ -1,0 +1,99 @@
+{
+    "homepage": {
+        "title": "仕事が起こる場所",
+        "description": "安全でリアルタイムな通信を通じて、チームメンバーとすぐにつながろう。協力プレイのために設計された機能で、スムーズな連携を体験しよう。",
+        "features": {
+            "realtime": "リアルタイムメッセージ",
+            "video": "ビデオ通話とミーティング",
+            "secure": "安全でプライベート"
+        },
+        "cta": "TeacherHubを始める ->"
+    },
+    "auth": {
+        "title": "仕事が起こる場所 ✨",
+        "subtitle": "安全でリアルタイムな通信を通じて、チームメンバーとすぐにつながろう。協力プレイのために設計された機能で、スムーズな連携を体験しよう。",
+        "features": {
+            "realtime": "リアルタイムメッセージ",
+            "video": "ビデオ通話とミーティング",
+            "secure": "安全でプライベート"
+        },
+        "cta": "Slapを始める"
+    },
+    "call": {
+        "error": {
+            "connect": "通話に接続できません。",
+            "init": "通話を開始できませんでした。更新するか、後でもう一度お試しください。"
+        },
+        "connecting": "通話に接続中..."
+    },
+    "chat": {
+        "error": {
+            "generic": "エラーが発生しました...",
+            "loading_channels": "チャンネルの読み込みエラー"
+        },
+        "create_channel": "チャンネルを作成",
+        "channels": "チャンネル",
+        "loading_channels": "チャンネルを読み込み中...",
+        "direct_messages": "ダイレクトメッセージ"
+    },
+    "modal": {
+        "create_channel": {
+            "title": "チャンネルを作成",
+            "validation": {
+                "required": "チャンネル名は必須です",
+                "min_length": "チャンネル名は3文字以上である必要があります",
+                "max_length": "チャンネル名は22文字未満である必要があります"
+            },
+            "success": "チャンネル \"{{name}}\" が正常に作成されました！",
+            "placeholder": "例: マーケティング",
+            "id_preview": "チャンネルID: #",
+            "type": {
+                "label": "チャンネルタイプ",
+                "public": "公開",
+                "public_desc": "誰でもこのチャンネルに参加できます",
+                "private": "プライベート",
+                "private_desc": "招待されたメンバーのみ参加できます"
+            },
+            "members": {
+                "label": "メンバーを追加",
+                "select_all": "すべて選択",
+                "selected_count": "{{count}} 選択済み",
+                "loading": "ユーザーを読み込み中...",
+                "no_users": "ユーザーが見つかりません"
+            },
+            "description": {
+                "label": "説明（オプション）",
+                "placeholder": "このチャンネルは何についてですか？"
+            },
+            "submit": "チャンネルを作成"
+        },
+        "invite": {
+            "title": "ユーザーを招待",
+            "error": {
+                "load_users": "ユーザーを読み込めませんでした",
+                "invite": "ユーザーを招待できませんでした"
+            },
+            "loading": "ユーザーを読み込み中...",
+            "no_users": "ユーザーが見つかりません"
+        },
+        "members": {
+            "title": "チャンネルメンバー"
+        },
+        "pinned": {
+            "title": "ピン留めされたメッセージ",
+            "empty": "ピン留めされたメッセージはありません"
+        }
+    },
+    "common": {
+        "cancel": "キャンセル",
+        "creating": "作成中...",
+        "inviting": "招待中...",
+        "invite": "招待"
+    },
+    "channel": {
+        "header": {
+            "video_call_tooltip": "ビデオ通話を開始",
+            "video_call_msg": "ビデオ通話を開始しました。ここから参加してください: {{url}}"
+        }
+    }
+}

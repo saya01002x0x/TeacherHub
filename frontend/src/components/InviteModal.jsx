@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { useChatContext } from "stream-chat-react";
 import { XIcon } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const InviteModal = ({ channel, onClose }) => {
   const { client } = useChatContext();
+  const { t } = useTranslation();
 
   const [users, setUsers] = useState([]);
   const [selectedMembers, setSelectedMembers] = useState([]);
@@ -23,7 +25,7 @@ const InviteModal = ({ channel, onClose }) => {
         setUsers(res.users);
       } catch (error) {
         console.log("Error fetching users", error);
-        setError("Failed to load users");
+        setError(t("modal.invite.error.load_users"));
       } finally {
         setIsLoadingUsers(false);
       }
@@ -42,7 +44,7 @@ const InviteModal = ({ channel, onClose }) => {
       await channel.addMembers(selectedMembers);
       onClose();
     } catch (error) {
-      setError("Failed to invite users");
+      setError(t("modal.invite.error.invite"));
       console.log("Error inviting users:", error);
     } finally {
       setIsInviting(false);
@@ -54,7 +56,7 @@ const InviteModal = ({ channel, onClose }) => {
       <div className="create-channel-modal">
         {/* HEADER */}
         <div className="create-channel-modal__header">
-          <h2>Invite Users</h2>
+          <h2>{t("modal.invite.title")}</h2>
           <button onClick={onClose} className="create-channel-modal__close">
             <XIcon className="size-4" />
           </button>
@@ -62,9 +64,9 @@ const InviteModal = ({ channel, onClose }) => {
 
         {/* CONTENT */}
         <div className="create-channel-modal__form">
-          {isLoadingUsers && <p>Loading users...</p>}
+          {isLoadingUsers && <p>{t("modal.invite.loading")}</p>}
           {error && <p className="form-error">{error}</p>}
-          {users.length === 0 && !isLoadingUsers && <p>No users found</p>}
+          {users.length === 0 && !isLoadingUsers && <p>{t("modal.invite.no_users")}</p>}
 
           {users.length > 0 &&
             users.map((user) => {
@@ -73,9 +75,8 @@ const InviteModal = ({ channel, onClose }) => {
               return (
                 <label
                   key={user.id}
-                  className={`flex items-center gap-4 p-3 rounded-lg cursor-pointer transition-all shadow-sm bg-white hover:bg-[#f5f3ff] border-2 ${
-                    isChecked ? "border-[#611f69] bg-[#f3e6fa]" : "border-gray-200"
-                  }`}
+                  className={`flex items-center gap-4 p-3 rounded-lg cursor-pointer transition-all shadow-sm bg-white hover:bg-[#f5f3ff] border-2 ${isChecked ? "border-[#611f69] bg-[#f3e6fa]" : "border-gray-200"
+                    }`}
                 >
                   <input
                     type="checkbox"
@@ -109,14 +110,14 @@ const InviteModal = ({ channel, onClose }) => {
           {/* ACTIONS */}
           <div className="create-channel-modal__actions mt-4">
             <button className="btn btn-secondary" onClick={onClose} disabled={isInviting}>
-              Cancel
+              {t("common.cancel")}
             </button>
             <button
               className="btn btn-primary"
               onClick={handleInvite}
               disabled={!selectedMembers.length || isInviting}
             >
-              {isInviting ? "Inviting..." : "Invite"}
+              {isInviting ? t("common.inviting") : t("common.invite")}
             </button>
           </div>
         </div>

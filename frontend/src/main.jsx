@@ -13,6 +13,7 @@ import {
   matchRoutes,
 } from "react-router";
 import { Toaster } from "react-hot-toast";
+import "./i18n";
 
 import * as Sentry from "@sentry/react";
 

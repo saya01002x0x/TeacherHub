@@ -5,8 +5,10 @@ import { useUser } from "@clerk/clerk-react";
 import MembersModal from "./MembersModal";
 import PinnedMessagesModal from "./PinnedMessagesModal";
 import InviteModal from "./InviteModal";
+import { useTranslation } from "react-i18next";
 
 const CustomChannelHeader = () => {
+  const { t } = useTranslation();
   const { channel } = useChannelStateContext();
   const { user } = useUser();
 
@@ -33,7 +35,7 @@ const CustomChannelHeader = () => {
     if (channel) {
       const callUrl = `${window.location.origin}/call/${channel.id}`;
       await channel.sendMessage({
-        text: `I've started a video call. Join me here: ${callUrl}`,
+        text: t("channel.header.video_call_msg", { url: callUrl }),
       });
     }
   };
@@ -74,14 +76,14 @@ const CustomChannelHeader = () => {
         <button
           className="hover:bg-[#F8F8F8] p-1 rounded"
           onClick={handleVideoCall}
-          title="Start Video Call"
+          title={t("channel.header.video_call_tooltip")}
         >
           <VideoIcon className="size-5 text-[#1264A3]" />
         </button>
 
         {channel.data?.private && (
           <button className="btn btn-primary" onClick={() => setShowInvite(true)}>
-            Invite
+            {t("common.invite")}
           </button>
         )}
 

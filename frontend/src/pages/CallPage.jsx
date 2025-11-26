@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useUser } from "@clerk/clerk-react";
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 
 import { getStreamToken } from "../lib/api";
 
@@ -24,6 +25,7 @@ const STREAM_API_KEY = import.meta.env.VITE_STREAM_API_KEY;
 const CallPage = () => {
   const { id: callId } = useParams();
   const { user, isLoaded } = useUser();
+  const { t } = useTranslation();
 
   const [client, setClient] = useState(null);
   const [call, setCall] = useState(null);
@@ -57,7 +59,7 @@ const CallPage = () => {
         setCall(callInstance);
       } catch (error) {
         console.log("Error init call:", error);
-        toast.error("Cannot connect to the call.");
+        toast.error(t("call.error.connect"));
       } finally {
         setIsConnecting(false);
       }
@@ -67,7 +69,7 @@ const CallPage = () => {
   }, [tokenData, user, callId]);
 
   if (isConnecting || !isLoaded) {
-    return <div className="h-screen flex justify-center items-center">Connecting to call...</div>;
+    return <div className="h-screen flex justify-center items-center">{t("call.connecting")}</div>;
   }
 
   return (
@@ -81,7 +83,7 @@ const CallPage = () => {
           </StreamVideo>
         ) : (
           <div className="flex items-center justify-center h-full">
-            <p>Could not initialize call. Please refresh or try again later</p>
+            <p>{t("call.error.init")}</p>
           </div>
         )}
       </div>
