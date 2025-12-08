@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useChatContext } from "stream-chat-react";
 
-function MembersModal({ members, channel, onClose }) {
+function MembersModal({ members, channel, onClose, canManageMembers }) {
   const { t } = useTranslation();
   const { client } = useChatContext();
 
@@ -78,56 +78,58 @@ function MembersModal({ members, channel, onClose }) {
         </div>
 
         <div className="p-6">
-          {/* SEARCH */}
-          <div className="relative mb-6">
-            <div className="relative">
-              <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={handleSearch}
-                placeholder={t("modal.members.search_placeholder")}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-              />
-            </div>
-
-            {/* SEARCH RESULTS */}
-            {searchQuery && (
-              <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-10 max-h-48 overflow-y-auto">
-                {isSearching ? (
-                  <div className="p-3 text-center text-gray-500 text-sm">Loading...</div>
-                ) : searchResults.length > 0 ? (
-                  searchResults.map((user) => (
-                    <div
-                      key={user.id}
-                      className="flex items-center justify-between p-3 hover:bg-gray-50 transition-colors"
-                    >
-                      <div className="flex items-center gap-3">
-                        {user.image ? (
-                          <img src={user.image} alt={user.name} className="size-8 rounded-full object-cover" />
-                        ) : (
-                          <div className="size-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-semibold text-sm">
-                            {(user.name || user.id).charAt(0).toUpperCase()}
-                          </div>
-                        )}
-                        <span className="text-sm font-medium text-gray-700">{user.name || user.id}</span>
-                      </div>
-                      <button
-                        onClick={() => handleAddMember(user.id)}
-                        disabled={isActionLoading}
-                        className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-full transition-colors disabled:opacity-50"
-                        title={t("modal.members.add")}
-                      >
-                        <UserPlusIcon className="size-4" />
-                      </button>
-                    </div>
-                  ))
-                ) : (
-                  <div className="p-3 text-center text-gray-500 text-sm">{t("common.user_not_found")}</div>
-                )}
+          {/* SEARCH - Only show if canManageMembers is true */}
+          {canManageMembers && (
+            <div className="relative mb-6">
+              <div className="relative">
+                <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={handleSearch}
+                  placeholder={t("modal.members.search_placeholder")}
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                />
               </div>
-            )}
-          </div>
+
+              {/* SEARCH RESULTS */}
+              {searchQuery && (
+                <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-10 max-h-48 overflow-y-auto">
+                  {isSearching ? (
+                    <div className="p-3 text-center text-gray-500 text-sm">Loading...</div>
+                  ) : searchResults.length > 0 ? (
+                    searchResults.map((user) => (
+                      <div
+                        key={user.id}
+                        className="flex items-center justify-between p-3 hover:bg-gray-50 transition-colors"
+                      >
+                        <div className="flex items-center gap-3">
+                          {user.image ? (
+                            <img src={user.image} alt={user.name} className="size-8 rounded-full object-cover" />
+                          ) : (
+                            <div className="size-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-semibold text-sm">
+                              {(user.name || user.id).charAt(0).toUpperCase()}
+                            </div>
+                          )}
+                          <span className="text-sm font-medium text-gray-700">{user.name || user.id}</span>
+                        </div>
+                        <button
+                          onClick={() => handleAddMember(user.id)}
+                          disabled={isActionLoading}
+                          className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-full transition-colors disabled:opacity-50"
+                          title={t("modal.members.add")}
+                        >
+                          <UserPlusIcon className="size-4" />
+                        </button>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="p-3 text-center text-gray-500 text-sm">{t("common.user_not_found")}</div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
 
           {/* MEMBERS LIST */}
           <div className="mt-2 text-sm text-gray-500 font-medium mb-3">
@@ -164,7 +166,8 @@ function MembersModal({ members, channel, onClose }) {
 
                 <div className="opacity-0 group-hover:opacity-100 transition-opacity">
                   {/* Don't allow removing self, usually */}
-                  {client.userID !== member.user.id && (
+                  {/* Also check canManageMembers */}
+                  {client.userID !== member.user.id && canManageMembers && (
                     <button
                       onClick={() => handleRemoveMember(member.user.id)}
                       disabled={isActionLoading}
