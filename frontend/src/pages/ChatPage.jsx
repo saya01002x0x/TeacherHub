@@ -21,6 +21,7 @@ import CreateChannelModal from "../components/CreateChannelModal";
 import CustomChannelPreview from "../components/CustomChannelPreview";
 import UsersList from "../components/UsersList";
 import CustomChannelHeader from "../components/CustomChannelHeader";
+import CustomMessageInput from "../components/CustomMessageInput";
 
 const ChatPage = () => {
   const { t } = useTranslation();
@@ -118,6 +119,7 @@ const ChatPage = () => {
                 <CustomChannelHeader />
                 <MessageList />
                 <MessageInput />
+                {/* <MessageInput Input={CustomMessageInput} /> */}
               </Window>
 
               <Thread />
