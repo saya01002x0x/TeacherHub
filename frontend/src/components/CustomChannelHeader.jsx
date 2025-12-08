@@ -94,6 +94,7 @@ const CustomChannelHeader = () => {
 
       {showMembers && (
         <MembersModal
+          channel={channel}
           members={Object.values(channel.state.members)}
           onClose={() => setShowMembers(false)}
         />

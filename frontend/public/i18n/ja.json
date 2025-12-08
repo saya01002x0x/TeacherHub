@@ -59,7 +59,11 @@
                 "select_all": "すべて選択",
                 "selected_count": "{{count}} 選択済み",
                 "loading": "ユーザーを読み込み中...",
-                "no_users": "ユーザーが見つかりません"
+                "no_users": "ユーザーが見つかりません",
+                "search_placeholder": "メンバーを検索...",
+                "add": "メンバーを追加",
+                "remove": "メンバーを削除",
+                "members_count_label": "メンバー"
             },
             "description": {
                 "label": "説明（オプション）",
