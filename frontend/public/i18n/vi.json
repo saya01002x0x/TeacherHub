@@ -59,7 +59,11 @@
         "select_all": "Chọn tất cả",
         "selected_count": "{{count}} đã chọn",
         "loading": "Đang tải người dùng...",
-        "no_users": "Không tìm thấy người dùng"
+        "no_users": "Không tìm thấy người dùng",
+        "search_placeholder": "Tìm thêm thành viên...",
+        "add": "Thêm thành viên",
+        "remove": "Xóa thành viên",
+        "members_count_label": "Thành viên"
       },
       "description": {
         "label": "Mô tả (tùy chọn)",
@@ -77,7 +81,11 @@
       "no_users": "Không tìm thấy người dùng"
     },
     "members": {
-      "title": "Thành viên kênh"
+      "title": "Thành viên kênh",
+      "search_placeholder": "Tìm thêm thành viên...",
+      "add": "Thêm thành viên",
+      "remove": "Xóa thành viên",
+      "members_count_label": "Thành viên"
     },
     "pinned": {
       "title": "Tin nhắn đã ghim",
@@ -88,12 +96,24 @@
     "cancel": "Hủy",
     "creating": "Đang tạo...",
     "inviting": "Đang mời...",
-    "invite": "Mời"
+    "invite": "Mời",
+    "user_not_found": "Không tìm thấy người dùng"
   },
   "channel": {
     "header": {
       "video_call_tooltip": "Bắt đầu cuộc gọi video",
       "video_call_msg": "Tôi đã bắt đầu cuộc gọi video. Tham gia tại đây: {{url}}"
     }
+  },
+  "poll": {
+    "create_title": "Tạo cuộc bình chọn",
+    "question_label": "Câu hỏi",
+    "question_placeholder": "Đặt câu hỏi của bạn...",
+    "options_label": "Tùy chọn",
+    "option_placeholder": "Tùy chọn",
+    "add_option": "Thêm tùy chọn",
+    "allow_multiple": "Cho phép chọn nhiều phương án",
+    "create_button": "Tạo bình chọn",
+    "creating": "Đang tạo..."
   }
 }

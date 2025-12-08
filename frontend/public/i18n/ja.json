@@ -59,7 +59,11 @@
                 "select_all": "すべて選択",
                 "selected_count": "{{count}} 選択済み",
                 "loading": "ユーザーを読み込み中...",
-                "no_users": "ユーザーが見つかりません"
+                "no_users": "ユーザーが見つかりません",
+                "search_placeholder": "メンバーを検索...",
+                "add": "メンバーを追加",
+                "remove": "メンバーを削除",
+                "members_count_label": "メンバー"
             },
             "description": {
                 "label": "説明（オプション）",
@@ -95,5 +99,16 @@
             "video_call_tooltip": "ビデオ通話を開始",
             "video_call_msg": "ビデオ通話を開始しました。ここから参加してください: {{url}}"
         }
+    },
+    "poll": {
+        "create_title": "投票を作成",
+        "question_label": "質問",
+        "question_placeholder": "質問を入力してください...",
+        "options_label": "オプション",
+        "option_placeholder": "オプション",
+        "add_option": "オプションを追加",
+        "allow_multiple": "複数回答を許可する",
+        "create_button": "投票を作成",
+        "creating": "作成中..."
     }
 }

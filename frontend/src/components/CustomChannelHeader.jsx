@@ -81,11 +81,11 @@ const CustomChannelHeader = () => {
           <VideoIcon className="size-5 text-[#1264A3]" />
         </button>
 
-        {channel.data?.private && (
+        {/* {channel.data?.private && (
           <button className="btn btn-primary" onClick={() => setShowInvite(true)}>
             {t("common.invite")}
           </button>
-        )}
+        )} */}
 
         <button className="hover:bg-[#F8F8F8] p-1 rounded" onClick={handleShowPinned}>
           <PinIcon className="size-4 text-[#616061]" />
@@ -94,8 +94,10 @@ const CustomChannelHeader = () => {
 
       {showMembers && (
         <MembersModal
+          channel={channel}
           members={Object.values(channel.state.members)}
           onClose={() => setShowMembers(false)}
+          canManageMembers={channel.data?.private && !isDM}
         />
       )}
 
