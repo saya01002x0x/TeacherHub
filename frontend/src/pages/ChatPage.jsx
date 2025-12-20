@@ -22,6 +22,7 @@ import CustomChannelPreview from "../components/CustomChannelPreview";
 import UsersList from "../components/UsersList";
 import CustomChannelHeader from "../components/CustomChannelHeader";
 import CustomMessageInput from "../components/CustomMessageInput";
+import LanguageSwitcher from "../components/LanguageSwitcher";
 
 const ChatPage = () => {
   const { t } = useTranslation();
@@ -48,6 +49,7 @@ const ChatPage = () => {
 
   return (
     <div className="chat-wrapper">
+      <LanguageSwitcher />
       <Chat client={chatClient}>
         <div className="chat-container">
           {/* LEFT SIDEBAR */}
