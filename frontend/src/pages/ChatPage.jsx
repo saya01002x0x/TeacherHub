@@ -22,33 +22,54 @@ import CustomChannelPreview from "../components/CustomChannelPreview";
 import UsersList from "../components/UsersList";
 import CustomChannelHeader from "../components/CustomChannelHeader";
 import CustomMessageInput from "../components/CustomMessageInput";
+import LanguageSwitcher from "../components/LanguageSwitcher";
+import { useStreami18n } from "../hooks/useStreami18n";
 
 const ChatPage = () => {
   const { t } = useTranslation();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [activeChannel, setActiveChannel] = useState(null);
+  const [channelError, setChannelError] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
 
   const { chatClient, error, isLoading } = useStreamChat();
+  const { streami18n, isReady: isStreami18nReady } = useStreami18n();
 
   // set active channel from URL params
   useEffect(() => {
-    if (chatClient) {
+    const initChannel = async () => {
+      if (!chatClient) return;
+
       const channelId = searchParams.get("channel");
       if (channelId) {
-        const channel = chatClient.channel("messaging", channelId);
-        setActiveChannel(channel);
+        try {
+          const channel = chatClient.channel("messaging", channelId);
+          await channel.watch();
+          setActiveChannel(channel);
+          setChannelError(null);
+        } catch (err) {
+          console.error("Channel access error:", err);
+          setChannelError(t("chat.error.channel_not_found"));
+          setActiveChannel(null);
+          // Clear channel param and redirect to main chat
+          setSearchParams({});
+        }
+      } else {
+        setChannelError(null);
       }
-    }
-  }, [chatClient, searchParams]);
+    };
+
+    initChannel();
+  }, [chatClient, searchParams, t, setSearchParams]);
 
   // todo: handle this with a better component
   if (error) return <p>{t("chat.error.generic")}</p>;
-  if (isLoading || !chatClient) return <PageLoader />;
+  if (isLoading || !chatClient || !isStreami18nReady) return <PageLoader />;
 
   return (
     <div className="chat-wrapper">
-      <Chat client={chatClient}>
+      <LanguageSwitcher />
+      <Chat client={chatClient} i18nInstance={streami18n}>
         <div className="chat-container">
           {/* LEFT SIDEBAR */}
           <div className="str-chat__channel-list">

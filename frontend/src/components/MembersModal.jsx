@@ -55,7 +55,14 @@ function MembersModal({ members, channel, onClose, canManageMembers }) {
   const handleRemoveMember = async (userId) => {
     try {
       setIsActionLoading(true);
+      const removedUser = members.find(m => m.user.id === userId)?.user;
       await channel.removeMembers([userId]);
+      // Send system message about removal
+      if (removedUser) {
+        await channel.sendMessage({
+          text: t("kicked.removed_message", { name: removedUser.name || userId }),
+        });
+      }
     } catch (error) {
       console.error("Error removing member:", error);
     } finally {
