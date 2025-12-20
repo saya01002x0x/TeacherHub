@@ -29,7 +29,8 @@
     "chat": {
         "error": {
             "generic": "エラーが発生しました...",
-            "loading_channels": "チャンネルの読み込みエラー"
+            "loading_channels": "チャンネルの読み込みエラー",
+            "channel_not_found": "チャンネルが存在しないか、アクセス権限がありません"
         },
         "create_channel": "チャンネルを作成",
         "channels": "チャンネル",
@@ -110,5 +111,9 @@
         "allow_multiple": "複数回答を許可する",
         "create_button": "投票を作成",
         "creating": "作成中..."
+    },
+    "kicked": {
+        "notification": "このチャンネルから削除されました",
+        "removed_message": "{{name}}がチャンネルから削除されました"
     }
 }

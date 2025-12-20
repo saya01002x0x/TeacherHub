@@ -97,7 +97,7 @@ const CustomChannelHeader = () => {
           channel={channel}
           members={Object.values(channel.state.members)}
           onClose={() => setShowMembers(false)}
-          canManageMembers={channel.data?.private && !isDM}
+          canManageMembers={channel.data?.private && !isDM && (channel.data?.created_by_id === user.id || channel.data?.created_by?.id === user.id)}
         />
       )}
 
