@@ -23,6 +23,7 @@ import UsersList from "../components/UsersList";
 import CustomChannelHeader from "../components/CustomChannelHeader";
 import CustomMessageInput from "../components/CustomMessageInput";
 import LanguageSwitcher from "../components/LanguageSwitcher";
+import { useStreami18n } from "../hooks/useStreami18n";
 
 const ChatPage = () => {
   const { t } = useTranslation();
@@ -31,6 +32,7 @@ const ChatPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const { chatClient, error, isLoading } = useStreamChat();
+  const { streami18n, isReady: isStreami18nReady } = useStreami18n();
 
   // set active channel from URL params
   useEffect(() => {
@@ -45,12 +47,12 @@ const ChatPage = () => {
 
   // todo: handle this with a better component
   if (error) return <p>{t("chat.error.generic")}</p>;
-  if (isLoading || !chatClient) return <PageLoader />;
+  if (isLoading || !chatClient || !isStreami18nReady) return <PageLoader />;
 
   return (
     <div className="chat-wrapper">
       <LanguageSwitcher />
-      <Chat client={chatClient}>
+      <Chat client={chatClient} i18nInstance={streami18n}>
         <div className="chat-container">
           {/* LEFT SIDEBAR */}
           <div className="str-chat__channel-list">
