@@ -98,7 +98,9 @@
     "creating": "Đang tạo...",
     "inviting": "Đang mời...",
     "invite": "Mời",
-    "user_not_found": "Không tìm thấy người dùng"
+    "user_not_found": "Không tìm thấy người dùng",
+    "close": "Đóng",
+    "deleting": "Đang xóa..."
   },
   "channel": {
     "header": {
@@ -120,5 +122,31 @@
   "kicked": {
     "notification": "Bạn đã bị xóa khỏi kênh này",
     "removed_message": "{{name}} đã bị xóa khỏi kênh"
+  },
+  "schedule": {
+    "title": "Lịch trình",
+    "create_title": "Tạo lịch trình",
+    "new_schedule": "Đăng ký lịch mới",
+    "title_label": "Tiêu đề",
+    "title_placeholder": "Tiêu đề sự kiện...",
+    "date_label": "Ngày",
+    "time_label": "Thời gian",
+    "start_time": "Giờ bắt đầu",
+    "end_time": "Giờ kết thúc",
+    "participants_label": "Người tham gia",
+    "participants_placeholder": "Tìm kiếm hoặc mời thành viên...",
+    "details_label": "Chi tiết",
+    "details_placeholder": "Nội dung, đường dẫn...",
+    "create_button": "Tạo",
+    "delete_button": "Xóa",
+    "delete_confirm_title": "Xóa lịch trình",
+    "delete_confirm_message": "Bạn có chắc chắn muốn xóa lịch trình này?",
+    "validation": {
+      "title_required": "Tiêu đề là bắt buộc",
+      "title_max_length": "Tiêu đề tối đa 255 ký tự",
+      "date_required": "Ngày là bắt buộc",
+      "time_required": "Thời gian là bắt buộc",
+      "end_after_start": "Giờ kết thúc phải sau giờ bắt đầu"
+    }
   }
 }
