@@ -6,6 +6,7 @@ import MembersModal from "./MembersModal";
 import PinnedMessagesModal from "./PinnedMessagesModal";
 import InviteModal from "./InviteModal";
 import { useTranslation } from "react-i18next";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 const CustomChannelHeader = () => {
   const { t } = useTranslation();
@@ -72,6 +73,8 @@ const CustomChannelHeader = () => {
           <UsersIcon className="size-5 text-[#616061]" />
           <span className="text-sm text-[#616061]">{memberCount}</span>
         </button>
+
+        <LanguageSwitcher inline />
 
         <button
           className="hover:bg-[#F8F8F8] p-1 rounded"

@@ -22,7 +22,6 @@ import CustomChannelPreview from "../components/CustomChannelPreview";
 import UsersList from "../components/UsersList";
 import CustomChannelHeader from "../components/CustomChannelHeader";
 import CustomMessageInput from "../components/CustomMessageInput";
-import LanguageSwitcher from "../components/LanguageSwitcher";
 import { useStreami18n } from "../hooks/useStreami18n";
 import ScheduleCalendar from "../components/ScheduleCalendar";
 
@@ -70,7 +69,6 @@ const ChatPage = () => {
 
   return (
     <div className="chat-wrapper">
-      <LanguageSwitcher />
       <Chat client={chatClient} i18nInstance={streami18n}>
         <div className="chat-container">
           {/* LEFT SIDEBAR */}
