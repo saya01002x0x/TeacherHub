@@ -57,15 +57,24 @@ const ScheduleCalendar = ({ onClose }) => {
         setCurrentWeekStart(newStart);
     };
 
+    // Get locale based on current language
+    const getLocale = () => {
+        const lang = t("locale", { defaultValue: "" });
+        if (lang) return lang;
+        // Fallback based on i18n language
+        const i18nLang = window.localStorage.getItem("i18nextLng") || "ja";
+        return i18nLang === "vi" ? "vi-VN" : "ja-JP";
+    };
+
     const formatMonthYear = () => {
-        return currentWeekStart.toLocaleDateString("ja-JP", {
+        return currentWeekStart.toLocaleDateString(getLocale(), {
             year: "numeric",
             month: "long",
         });
     };
 
     const getDayName = (date) => {
-        return date.toLocaleDateString("ja-JP", { weekday: "short" });
+        return date.toLocaleDateString(getLocale(), { weekday: "short" });
     };
 
     const isToday = (date) => {
