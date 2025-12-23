@@ -78,7 +78,7 @@ const ChatPage = () => {
               <div className="team-channel-list__header gap-4">
                 <div className="brand-container">
                   <img src="/logo.png" alt="Logo" className="brand-logo" />
-                  <span className="brand-name">TeacherHub</span>
+                  <span className="brand-name">TechHub</span>
                 </div>
                 <div className="user-button-wrapper">
                   <UserButton />
