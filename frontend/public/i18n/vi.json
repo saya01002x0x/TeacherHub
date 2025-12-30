@@ -106,7 +106,8 @@
   "channel": {
     "header": {
       "video_call_tooltip": "Bắt đầu cuộc gọi video",
-      "video_call_msg": "Tôi đã bắt đầu cuộc gọi video. Tham gia tại đây: {{url}}"
+      "video_call_msg": "Tôi đã bắt đầu cuộc gọi video. Tham gia tại đây: {{url}}",
+      "schedule_tooltip": "Lịch trình kênh"
     }
   },
   "poll": {

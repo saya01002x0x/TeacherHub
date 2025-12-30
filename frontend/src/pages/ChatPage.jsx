@@ -23,12 +23,10 @@ import UsersList from "../components/UsersList";
 import CustomChannelHeader from "../components/CustomChannelHeader";
 import CustomMessageInput from "../components/CustomMessageInput";
 import { useStreami18n } from "../hooks/useStreami18n";
-import ScheduleCalendar from "../components/ScheduleCalendar";
 
 const ChatPage = () => {
   const { t } = useTranslation();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [isScheduleViewOpen, setIsScheduleViewOpen] = useState(false);
   const [activeChannel, setActiveChannel] = useState(null);
   const [channelError, setChannelError] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -126,18 +124,6 @@ const ChatPage = () => {
                         </div>
                       </div>
                       <UsersList activeChannel={activeChannel} />
-
-                      {/* SCHEDULE BUTTON */}
-                      <div className="schedule-section" style={{ padding: "1rem 1.5rem" }}>
-                        <button
-                          onClick={() => setIsScheduleViewOpen(true)}
-                          className="create-channel-btn"
-                          style={{ background: "linear-gradient(135deg, #059669 0%, #047857 50%, #065f46 100%)" }}
-                        >
-                          <CalendarIcon className="size-4" />
-                          <span>{t("schedule.title")}</span>
-                        </button>
-                      </div>
                     </div>
                   )}
                 />
@@ -161,15 +147,6 @@ const ChatPage = () => {
         </div>
 
         {isCreateModalOpen && <CreateChannelModal onClose={() => setIsCreateModalOpen(false)} />}
-
-        {/* SCHEDULE CALENDAR VIEW */}
-        {isScheduleViewOpen && (
-          <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-            <div className="w-full max-w-6xl h-[90vh] bg-white rounded-2xl overflow-hidden shadow-2xl">
-              <ScheduleCalendar onClose={() => setIsScheduleViewOpen(false)} />
-            </div>
-          </div>
-        )}
       </Chat>
     </div>
   );

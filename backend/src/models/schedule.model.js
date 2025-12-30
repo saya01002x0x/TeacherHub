@@ -45,6 +45,10 @@ const scheduleSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        channelId: {
+            type: String,
+            required: true,
+        },
         recurrence: {
             type: String,
             enum: ["none", "daily", "weekly", "monthly"],
@@ -53,6 +57,9 @@ const scheduleSchema = new mongoose.Schema(
     },
     { timestamps: true }
 );
+
+// Index for efficient querying
+scheduleSchema.index({ channelId: 1, date: 1 });
 
 // Validate that endTime is after startTime
 scheduleSchema.pre("validate", function (next) {

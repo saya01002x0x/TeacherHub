@@ -101,7 +101,8 @@
     "channel": {
         "header": {
             "video_call_tooltip": "ビデオ通話を開始",
-            "video_call_msg": "ビデオ通話を開始しました。ここから参加してください: {{url}}"
+            "video_call_msg": "ビデオ通話を開始しました。ここから参加してください: {{url}}",
+            "schedule_tooltip": "チャンネルスケジュール"
         }
     },
     "poll": {
