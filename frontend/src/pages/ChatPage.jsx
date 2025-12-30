@@ -23,12 +23,15 @@ import UsersList from "../components/UsersList";
 import CustomChannelHeader from "../components/CustomChannelHeader";
 import CustomMessageInput from "../components/CustomMessageInput";
 import { useStreami18n } from "../hooks/useStreami18n";
+import ScheduleCalendar from "../components/ScheduleCalendar";
+import MessageInputWithSchedule from "../components/MessageInputWithSchedule";
 
 const ChatPage = () => {
   const { t } = useTranslation();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [activeChannel, setActiveChannel] = useState(null);
   const [channelError, setChannelError] = useState(null);
+  const [showSchedule, setShowSchedule] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
 
   const { chatClient, error, isLoading } = useStreamChat();
@@ -136,9 +139,20 @@ const ChatPage = () => {
             <Channel channel={activeChannel}>
               <Window>
                 <CustomChannelHeader />
-                <MessageList />
-                <MessageInput />
-                {/* <MessageInput Input={CustomMessageInput} /> */}
+                {!showSchedule ? (
+                  <>
+                    <MessageList />
+                    <MessageInputWithSchedule
+                      showSchedule={showSchedule}
+                      setShowSchedule={setShowSchedule}
+                    />
+                  </>
+                ) : (
+                  <ScheduleCalendar
+                    channelId={activeChannel?.id}
+                    onClose={() => setShowSchedule(false)}
+                  />
+                )}
               </Window>
 
               <Thread />
