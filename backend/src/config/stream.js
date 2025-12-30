@@ -39,3 +39,7 @@ export const addUserToPublicChannels = async (newUserId) => {
     await channel.addMembers([newUserId]);
   }
 };
+
+export const getStreamServerClient = () => {
+  return streamClient;
+};
