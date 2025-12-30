@@ -22,16 +22,16 @@ import CustomChannelPreview from "../components/CustomChannelPreview";
 import UsersList from "../components/UsersList";
 import CustomChannelHeader from "../components/CustomChannelHeader";
 import CustomMessageInput from "../components/CustomMessageInput";
-import LanguageSwitcher from "../components/LanguageSwitcher";
 import { useStreami18n } from "../hooks/useStreami18n";
 import ScheduleCalendar from "../components/ScheduleCalendar";
+import MessageInputWithSchedule from "../components/MessageInputWithSchedule";
 
 const ChatPage = () => {
   const { t } = useTranslation();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [isScheduleViewOpen, setIsScheduleViewOpen] = useState(false);
   const [activeChannel, setActiveChannel] = useState(null);
   const [channelError, setChannelError] = useState(null);
+  const [showSchedule, setShowSchedule] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
 
   const { chatClient, error, isLoading } = useStreamChat();
@@ -70,7 +70,6 @@ const ChatPage = () => {
 
   return (
     <div className="chat-wrapper">
-      <LanguageSwitcher />
       <Chat client={chatClient} i18nInstance={streami18n}>
         <div className="chat-container">
           {/* LEFT SIDEBAR */}
@@ -80,7 +79,7 @@ const ChatPage = () => {
               <div className="team-channel-list__header gap-4">
                 <div className="brand-container">
                   <img src="/logo.png" alt="Logo" className="brand-logo" />
-                  <span className="brand-name">TeacherHub</span>
+                  <span className="brand-name">TechHub</span>
                 </div>
                 <div className="user-button-wrapper">
                   <UserButton />
@@ -128,18 +127,6 @@ const ChatPage = () => {
                         </div>
                       </div>
                       <UsersList activeChannel={activeChannel} />
-
-                      {/* SCHEDULE BUTTON */}
-                      <div className="schedule-section" style={{ padding: "1rem 1.5rem" }}>
-                        <button
-                          onClick={() => setIsScheduleViewOpen(true)}
-                          className="create-channel-btn"
-                          style={{ background: "linear-gradient(135deg, #059669 0%, #047857 50%, #065f46 100%)" }}
-                        >
-                          <CalendarIcon className="size-4" />
-                          <span>{t("schedule.title")}</span>
-                        </button>
-                      </div>
                     </div>
                   )}
                 />
@@ -152,9 +139,20 @@ const ChatPage = () => {
             <Channel channel={activeChannel}>
               <Window>
                 <CustomChannelHeader />
-                <MessageList />
-                <MessageInput />
-                {/* <MessageInput Input={CustomMessageInput} /> */}
+                {!showSchedule ? (
+                  <>
+                    <MessageList />
+                    <MessageInputWithSchedule
+                      showSchedule={showSchedule}
+                      setShowSchedule={setShowSchedule}
+                    />
+                  </>
+                ) : (
+                  <ScheduleCalendar
+                    channelId={activeChannel?.id}
+                    onClose={() => setShowSchedule(false)}
+                  />
+                )}
               </Window>
 
               <Thread />
@@ -163,15 +161,6 @@ const ChatPage = () => {
         </div>
 
         {isCreateModalOpen && <CreateChannelModal onClose={() => setIsCreateModalOpen(false)} />}
-
-        {/* SCHEDULE CALENDAR VIEW */}
-        {isScheduleViewOpen && (
-          <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-            <div className="w-full max-w-6xl h-[90vh] bg-white rounded-2xl overflow-hidden shadow-2xl">
-              <ScheduleCalendar onClose={() => setIsScheduleViewOpen(false)} />
-            </div>
-          </div>
-        )}
       </Chat>
     </div>
   );

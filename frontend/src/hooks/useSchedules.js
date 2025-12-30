@@ -4,7 +4,7 @@ import { useAuth } from "@clerk/clerk-react";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api";
 
-export const useSchedules = () => {
+export const useSchedules = (channelId) => {
     const { getToken } = useAuth();
     const [schedules, setSchedules] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -20,11 +20,17 @@ export const useSchedules = () => {
 
     const fetchSchedules = useCallback(
         async (startDate, endDate) => {
+            if (!channelId) {
+                console.warn("No channelId provided to fetchSchedules");
+                return [];
+            }
+
             setIsLoading(true);
             setError(null);
             try {
                 const headers = await getAuthHeaders();
                 const params = new URLSearchParams();
+                params.append("channelId", channelId);
                 if (startDate) params.append("startDate", startDate.toISOString());
                 if (endDate) params.append("endDate", endDate.toISOString());
 
@@ -42,18 +48,22 @@ export const useSchedules = () => {
                 setIsLoading(false);
             }
         },
-        [getToken]
+        [getToken, channelId]
     );
 
     const createSchedule = useCallback(
         async (scheduleData) => {
+            if (!channelId) {
+                throw new Error("channelId is required");
+            }
+
             setIsLoading(true);
             setError(null);
             try {
                 const headers = await getAuthHeaders();
                 const response = await axios.post(
                     `${API_BASE_URL}/schedules`,
-                    scheduleData,
+                    { ...scheduleData, channelId },
                     { headers }
                 );
                 setSchedules((prev) => [...prev, response.data]);
@@ -67,7 +77,7 @@ export const useSchedules = () => {
                 setIsLoading(false);
             }
         },
-        [getToken]
+        [getToken, channelId]
     );
 
     const getScheduleById = useCallback(

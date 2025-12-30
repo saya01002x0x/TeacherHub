@@ -56,15 +56,41 @@ function MembersModal({ members, channel, onClose, canManageMembers }) {
     try {
       setIsActionLoading(true);
       const removedUser = members.find(m => m.user.id === userId)?.user;
+
+      console.log('Removing member:', removedUser?.name || userId);
       await channel.removeMembers([userId]);
-      // Send system message about removal
+      console.log('Member removed successfully');
+
+      // Send system message via backend API
       if (removedUser) {
-        await channel.sendMessage({
-          text: t("kicked.removed_message", { name: removedUser.name || userId }),
-        });
+        console.log('Sending system message via backend...');
+        try {
+          const response = await fetch('/api/chat/channel/system-message', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+            body: JSON.stringify({
+              channelId: channel.id,
+              channelType: channel.type,
+              message: t("kicked.removed_message", { name: removedUser.name || userId }),
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const data = await response.json();
+          console.log('System message sent successfully:', data);
+        } catch (msgError) {
+          console.error('Failed to send system message:', msgError);
+        }
       }
     } catch (error) {
       console.error("Error removing member:", error);
+      alert(`Lỗi khi xóa thành viên: ${error.message}`);
     } finally {
       setIsActionLoading(false);
     }

@@ -9,10 +9,10 @@ export const createSchedule = async (req, res) => {
             return res.status(401).json({ error: "Unauthorized" });
         }
 
-        const { title, date, startTime, endTime, participants, details, recurrence } = req.body;
+        const { title, date, startTime, endTime, participants, details, recurrence, channelId } = req.body;
 
         // Validate required fields
-        if (!title || !date || !startTime || !endTime) {
+        if (!title || !date || !startTime || !endTime || !channelId) {
             return res.status(400).json({ error: "Missing required fields" });
         }
 
@@ -29,6 +29,7 @@ export const createSchedule = async (req, res) => {
             participants: participants || [],
             details: details || "",
             createdBy: userId,
+            channelId,
             recurrence: recurrence || "none",
         });
 
@@ -44,7 +45,7 @@ export const createSchedule = async (req, res) => {
     }
 };
 
-// Get schedules for the authenticated user
+// Get schedules for the authenticated user and channel
 export const getSchedules = async (req, res) => {
     try {
         const { userId } = getAuth(req);
@@ -52,9 +53,14 @@ export const getSchedules = async (req, res) => {
             return res.status(401).json({ error: "Unauthorized" });
         }
 
-        const { startDate, endDate } = req.query;
+        const { startDate, endDate, channelId } = req.query;
+
+        if (!channelId) {
+            return res.status(400).json({ error: "channelId is required" });
+        }
 
         let query = {
+            channelId,
             $or: [
                 { createdBy: userId },
                 { "participants.clerkId": userId },
