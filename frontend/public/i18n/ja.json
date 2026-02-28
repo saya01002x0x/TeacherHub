@@ -1,0 +1,149 @@
+{
+    "locale": "ja-JP",
+    "homepage": {
+        "title": "仕事が起こる場所",
+        "description": "安全でリアルタイムな通信を通じて、チームメンバーとすぐにつながろう。協力プレイのために設計された機能で、スムーズな連携を体験しよう。",
+        "features": {
+            "realtime": "リアルタイムメッセージ",
+            "video": "ビデオ通話とミーティング",
+            "secure": "安全でプライベート"
+        },
+        "cta": "TeacherHubを始める ->"
+    },
+    "auth": {
+        "title": "仕事が起こる場所 ✨",
+        "subtitle": "安全でリアルタイムな通信を通じて、チームメンバーとすぐにつながろう。協力プレイのために設計された機能で、スムーズな連携を体験しよう。",
+        "features": {
+            "realtime": "リアルタイムメッセージ",
+            "video": "ビデオ通話とミーティング",
+            "secure": "安全でプライベート"
+        },
+        "cta": "Slapを始める"
+    },
+    "call": {
+        "error": {
+            "connect": "通話に接続できません。",
+            "init": "通話を開始できませんでした。更新するか、後でもう一度お試しください。"
+        },
+        "connecting": "通話に接続中..."
+    },
+    "chat": {
+        "error": {
+            "generic": "エラーが発生しました...",
+            "loading_channels": "チャンネルの読み込みエラー",
+            "channel_not_found": "チャンネルが存在しないか、アクセス権限がありません"
+        },
+        "create_channel": "チャンネルを作成",
+        "channels": "チャンネル",
+        "loading_channels": "チャンネルを読み込み中...",
+        "direct_messages": "ダイレクトメッセージ"
+    },
+    "modal": {
+        "create_channel": {
+            "title": "チャンネルを作成",
+            "validation": {
+                "required": "チャンネル名は必須です",
+                "min_length": "チャンネル名は3文字以上である必要があります",
+                "max_length": "チャンネル名は22文字未満である必要があります"
+            },
+            "success": "チャンネル \"{{name}}\" が正常に作成されました！",
+            "placeholder": "例: マーケティング",
+            "id_preview": "チャンネルID: #",
+            "type": {
+                "label": "チャンネルタイプ",
+                "public": "公開",
+                "public_desc": "誰でもこのチャンネルに参加できます",
+                "private": "プライベート",
+                "private_desc": "招待されたメンバーのみ参加できます"
+            },
+            "members": {
+                "label": "メンバーを追加",
+                "select_all": "すべて選択",
+                "selected_count": "{{count}} 選択済み",
+                "loading": "ユーザーを読み込み中...",
+                "no_users": "ユーザーが見つかりません",
+                "search_placeholder": "メンバーを検索...",
+                "add": "メンバーを追加",
+                "remove": "メンバーを削除",
+                "members_count_label": "メンバー"
+            },
+            "description": {
+                "label": "説明（オプション）",
+                "placeholder": "このチャンネルは何についてですか？"
+            },
+            "submit": "チャンネルを作成"
+        },
+        "invite": {
+            "title": "ユーザーを招待",
+            "error": {
+                "load_users": "ユーザーを読み込めませんでした",
+                "invite": "ユーザーを招待できませんでした"
+            },
+            "loading": "ユーザーを読み込み中...",
+            "no_users": "ユーザーが見つかりません"
+        },
+        "members": {
+            "title": "チャンネルメンバー"
+        },
+        "pinned": {
+            "title": "ピン留めされたメッセージ",
+            "empty": "ピン留めされたメッセージはありません"
+        }
+    },
+    "common": {
+        "cancel": "キャンセル",
+        "creating": "作成中...",
+        "inviting": "招待中...",
+        "invite": "招待",
+        "close": "閉じる",
+        "deleting": "削除中..."
+    },
+    "channel": {
+        "header": {
+            "video_call_tooltip": "ビデオ通話を開始",
+            "video_call_msg": "ビデオ通話を開始しました。ここから参加してください: {{url}}",
+            "schedule_tooltip": "チャンネルスケジュール"
+        }
+    },
+    "poll": {
+        "create_title": "投票を作成",
+        "question_label": "質問",
+        "question_placeholder": "質問を入力してください...",
+        "options_label": "オプション",
+        "option_placeholder": "オプション",
+        "add_option": "オプションを追加",
+        "allow_multiple": "複数回答を許可する",
+        "create_button": "投票を作成",
+        "creating": "作成中..."
+    },
+    "kicked": {
+        "notification": "このチャンネルから削除されました",
+        "removed_message": "{{name}}がチャンネルから削除されました"
+    },
+    "schedule": {
+        "title": "スケジュール",
+        "create_title": "スケジュールを作成",
+        "new_schedule": "新しい予定を登録",
+        "title_label": "タイトル",
+        "title_placeholder": "イベントのタイトル...",
+        "date_label": "日付",
+        "time_label": "時間",
+        "start_time": "開始時間",
+        "end_time": "終了時間",
+        "participants_label": "参加者",
+        "participants_placeholder": "メンバーを検索または招待...",
+        "details_label": "詳細",
+        "details_placeholder": "議題、リンクなど...",
+        "create_button": "作成",
+        "delete_button": "削除",
+        "delete_confirm_title": "予定を削除",
+        "delete_confirm_message": "この予定を削除してもよろしいですか？",
+        "validation": {
+            "title_required": "タイトルは必須です",
+            "title_max_length": "タイトルは255文字以内です",
+            "date_required": "日付は必須です",
+            "time_required": "時間は必須です",
+            "end_after_start": "終了時間は開始時間より後である必要があります"
+        }
+    }
+}
